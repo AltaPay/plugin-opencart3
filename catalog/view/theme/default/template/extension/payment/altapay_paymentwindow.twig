@@ -1,0 +1,61 @@
+{{ header }} 
+
+<div class="container">
+  	<div class="container">
+	  	<div class="row">
+	  		{{ column_left }} 		
+	  		
+	  		{% if (column_left and column_right) %} 
+			{% set class = 'col-sm-6' %} 
+			{% elseif (column_left or column_right) %} 
+			{% set class = 'col-sm-9' %} 
+			{% else %} 
+			{% set class = 'col-sm-12' %} 
+			{% endif %} 
+		
+			<div id="content" class="{{ class }}">
+				{{ content_top }} 
+				<main id="main" class="site-main" role="main">
+					<table class="table table-bordered table-hover">
+						<thead>
+						<tr>
+							<td class="text-left">Product Name</td>
+							<td class="text-left">Model</td>
+							<td class="text-right">Quantity</td>
+							<td class="text-right">Unit Price</td>
+							<td class="text-right">Total</td>
+						</tr>
+						</thead>
+						<tbody>
+					 {% for product in products %}
+						
+						<tr>
+							<td class="text-left"><a href={{ product['href'] }}">{{ product['name'] }}</a>
+							</td>
+							<td class="text-left">{{ product['model'] }}</td>
+							<td class="text-right">{{ product['quantity'] }}</td>
+							<td class="text-right">{{ product['price'] }}</td>
+							<td class="text-right">{{ product['total'] }}</td>
+						</tr>
+						{% endfor %}
+						
+						</tbody>
+						<tfoot>
+					{% for total in totals %}	
+						<tr>
+							<td colspan="4" class="text-right"><strong>{{ total['title'] }}:</strong></td>
+							<td class="text-right">{{ total['text'] }}</td>
+						</tr>
+						{% endfor %}
+						
+						</tfoot>
+					</table>
+					<form id="PensioPaymentForm"></form> 
+				</main>			
+				{{ content_bottom }} 
+			</div>
+			{{ column_right }} 
+	  	</div>
+	</div>
+</div>
+{{ footer }} 

@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<APIResponse version="20110831">
+	<Header>
+		<Date>2012-10-03T11:03:23+02:00</Date>
+		<Path>API/transactions</Path>
+		<ErrorCode>0</ErrorCode>
+		<ErrorMessage></ErrorMessage>
+	</Header>
+	<Body>
+		<Result />
+		<ResultFilter>
+			<TransactionIdEquals>18</TransactionIdEquals>
+		</ResultFilter>
+		<Transactions>
+			<Transaction>
+				<TransactionId>18</TransactionId>
+				<AuthType>subscription_payment</AuthType>
+				<CardStatus>Valid</CardStatus>
+				<CreditCardExpiry>
+					<Year>2021</Year>
+					<Month>12</Month>
+				</CreditCardExpiry>
+				<CreditCardToken>e3bd675aaebda1b7698016439e6d2d1bbbe11227</CreditCardToken>
+				<CreditCardMaskedPan>411111******1111</CreditCardMaskedPan>
+				<IsTokenized>true</IsTokenized>
+				<ThreeDSecureResult>Not_Applicable</ThreeDSecureResult>
+				<BlacklistToken>8eb2e9b803f5fef2dc60bb5201aedc89ceffa4af</BlacklistToken>
+				<ShopOrderId>APISchemaVerificationTests::testPreauthRecurring</ShopOrderId>
+				<Shop>Altapay Functional Test Shop</Shop>
+				<Terminal>Altapay Test Terminal</Terminal>
+				<TransactionStatus>preauth</TransactionStatus>
+				<MerchantCurrency>978</MerchantCurrency>
+				<CardHolderCurrency>978</CardHolderCurrency>
+				<ReservedAmount>42.13</ReservedAmount>
+				<CapturedAmount>0</CapturedAmount>
+				<RefundedAmount>0</RefundedAmount>
+				<RecurringDefaultAmount>0</RecurringDefaultAmount>
+				<CreatedDate>2012-10-03 10:37:14</CreatedDate>
+				<UpdatedDate>2012-10-03 10:37:14</UpdatedDate>
+				<PaymentNature>CreditCard</PaymentNature>
+				<PaymentSource>eCommerce</PaymentSource>
+				<PaymentNatureService name="TestAcquirer">
+					<SupportsRefunds>true</SupportsRefunds>
+					<SupportsRelease>true</SupportsRelease>
+					<SupportsMultipleCaptures>true</SupportsMultipleCaptures>
+					<SupportsMultipleRefunds>true</SupportsMultipleRefunds>
+				</PaymentNatureService>
+				<FraudRiskScore>42</FraudRiskScore>
+				<FraudExplanation>For the test fraud service the risk score is
+					always equal mod 101 of the created amount for the payment
+				</FraudExplanation>
+				<FraudRecommendation>Deny</FraudRecommendation>
+				<ChargebackEvents />
+				<TransactionInfo />
+				<CustomerInfo />
+				<ReconciliationIdentifiers />
+			</Transaction>
+		</Transactions>
+	</Body>
+</APIResponse>

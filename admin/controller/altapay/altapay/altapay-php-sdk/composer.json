@@ -1,0 +1,17 @@
+{
+    "name": "altapay/altapay-php-sdk",
+    "minimum-stability": "dev",
+    "config": {
+        "secure-http": false
+    },
+    "require-dev": {
+        "altapay/mockit": "dev-Mockit",
+        "altapay/phpunit": "dev-PHPUnit"
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "http://packages.mars.altapay.com"
+        }
+    ]
+}
