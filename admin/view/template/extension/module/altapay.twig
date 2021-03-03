@@ -1,0 +1,107 @@
+{{ header }}{{ column_left }} 
+<div id="content">
+	<div class="page-header">
+		<div class="container-fluid">
+			{% if (save_success or refresh_terminals_success) %} 
+			<div class="alert alert-success">
+				<i class="fa fa-check-circle"></i>
+				{{ save_success }}
+				{{ refresh_terminals_success }}
+				<button type="button" class="close" data-dismiss="alert">×</button>
+			</div>
+			{% endif %} 
+			{% if (refresh_terminals_error) %} 
+			<div class="alert alert-danger">
+				<i class="fa fa-info-circle"></i>
+				{{ refresh_terminals_error }} 
+				<button type="button" class="close" data-dismiss="alert">×</button>
+			</div>
+			{% endif %} 
+			<div class="pull-right">
+				<button type="submit" name="submit" form="form-altapay" data-toggle="tooltip" title="{{ button_saveclose }}" class="btn btn-primary">
+					<i class="fa fa-check-circle"></i>&nbsp{{ button_saveclose }}
+				</button>
+				<a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default">
+					<i class="fa fa-reply"></i>
+				</a>
+			</div>
+			<h1>{{ heading_title }}</h1>
+			<ul class="breadcrumb">
+				{% for breadcrumb in breadcrumbs %} 
+				<li><a href="{{ breadcrumb['href'] }}">{{ breadcrumb['text'] }}</a></li>
+				{% endfor %} 
+			</ul>
+		</div>
+	</div>
+	<div class="container-fluid">
+		{% if (error_warning) %} 
+		<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_warning }} 
+			<button type="button" class="close" data-dismiss="alert">&times</button>
+		</div>
+		{% endif %} 
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title"><i class="fa fa-pencil"></i> {{ heading_title }}</h3>
+			</div>
+			<div class="panel-body">
+				<form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-altapay" class="form-horizontal">
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="input-button-type">{{ entry_gateway_url }}</label>
+						<div class="col-sm-10">
+							<input type="text" name="module_altapay_gateway_url" class="form-control" value="{{module_altapay_gateway_url}}" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="input-button-colour">{{ entry_gateway_username }}</label>
+						<div class="col-sm-10">
+							<input type="text" name="module_altapay_gateway_username" class="form-control" value="{{module_altapay_gateway_username}}" />								
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="input-button-size">{{ entry_gateway_password }}</label>
+						<div class="col-sm-10">
+							<input type="password" name="module_altapay_gateway_password" class="form-control" value="{{module_altapay_gateway_password}}" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="input-button-size">{{ entry_gateway_status }}</label>
+						<div class="col-sm-10">
+					<select name="module_altapay_status" id="input-status" class="form-control">
+						{% if module_altapay_status %} 
+						<option value="1" selected="selected">{{ text_enabled }}</option>
+						<option value="0">{{ text_disabled }}</option>
+						{% else %} 
+						<option value="1">{{ text_enabled }}</option>
+						<option value="0" selected="selected">{{ text_disabled }}</option>
+						{% endif %} 
+					</select>
+					</div>
+					</div>
+
+					{% if altapay_terminals %} 
+					<div class="form-group">						
+						<label class="col-sm-2 control-label" for="input-status">{{ entry_terminals }}</label>
+						<div class="col-sm-10">
+							<button type="submit" class="btn btn-success" name="terminalrefresh" title="{{ button_refresh_terminals }}">
+								<i class="fa fa-refresh" aria-hidden="true"></i>&nbsp{{ button_refresh_terminals }}
+							</button>
+						</div>
+					</div>
+					{% endif %} 
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="input-status"></label>
+						<div class="col-sm-10">
+							<button type="submit" class="btn btn-primary" name="submit" title="{{ button_saveclose }}">
+								<i class="fa fa-check-circle"></i>&nbsp{{ button_saveclose }}
+							</button>
+							<button type="submit" name="savestay" class="btn btn-primary" name="savestay" title="{{ button_savestay }}">
+								<i class="fa fa-check-circle"></i>&nbsp{{ button_savestay }}
+							</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+{{ footer }}

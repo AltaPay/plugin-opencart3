@@ -1,0 +1,343 @@
+<h2>{{ text_payment_info }}</h2>
+<div id="transaction-msg" style="display:none;"></div>
+<table class="table table-striped table-bordered text-right col-xs-12">
+    <thead>
+        <tr>
+            <td style="display: none;">ID</td>
+            <td class="col-xs-5">Description</td>
+            <td class="col-xs-1">Price with tax</td>
+            <td class="col-xs-1">Price without tax</td>
+            <td class="col-xs-1">Ordered</td>
+            <td class="col-xs-1">Quantity</td>
+            <td class="col-xs-3">Total amount</td>
+        </tr>
+    </thead>
+    <tbody>
+     {% for item in order_data['items'] %} 
+ 
+            <tr>
+                <td style="display: none;" class="itemId">{{ item['order_product_id'] }}</td>
+                <td class="itemName">{{ item['name'] }}</td>
+                <td class="itemPriceWithTax">{{ item['price']+item['tax']}}</td>
+                <td class="itemPrice">{{ item['price'] }}</td>
+                <td>{{ item['quantity'] }}</td>
+                <td><input style="text-align: right" class="itemQuantity" id="quantity" type="number" value="0"></td>
+                <td class="totalAmount">{{ item['total']}}</td>
+            </tr>
+
+     {% endfor %}
+ 
+    </tbody>
+</table>
+<table class="table table-striped table-bordered">
+  <tr>
+    <td width="15%">{{ text_order_total }}:</td>
+    <td colspan="2">{{ order_data['amount'] ~ ' ' ~order_data['currency_code'] }} {# TODO Convert to ISO3 #}</td>
+  </tr>
+
+	{% if (payments) %}
+		{% for pay in payments %} 
+			{% set reserved = pay.getreservedAmount() %}
+			{% set captured = pay.getcapturedAmount() - pay.getrefundedAmount() %}					
+			{% set refunded = pay.getrefundedAmount() %}
+			{% set status = pay.getCurrentStatus() %}
+	
+			{% if (status == 'released') %}
+				{% set charge = 0 %}
+			{% else %} 
+				{% set charge = reserved - captured - refunded %}
+				{% if (charge <= 0) %} {% set charge = 0.00 %}{% endif %}
+			{% endif %}						
+		{% endfor %}
+	{% endif %}
+
+   <tr>
+    <td width="15%">{{ text_reserved_amount }}:</td>
+    <td colspan="2" id="altapay-total-reserved">{{ reserved }}</td>
+  </tr>
+  <tr>
+    <td width="15%">{{ text_captured_amount }}:</td>
+    <td id="altapay-total-captured">{{ captured }}</td>
+    <td>
+
+        <input type="number" name="capture_amount" id="capture-amount" class="" />
+		<a class="button btn btn-primary {% if (order_data['void_status'] == 1) %}disabled{% endif %}" id="btn-capture">{{ btn_capture }}</a>
+		<span class="btn btn-primary" id="img-loading-capture" style="display:none;"><i class="fa fa-cog fa-spin fa-lg"></i></span>
+    </td>
+  </tr>
+  <tr>
+    <td width="15%">{{ text_refund_amount }}:</td>
+    <td id="altapay-total-refunded">{{ refunded }}</td>
+    <td>
+
+        <input type="number" name="refund_amount" placeholder="" id="refund-amount" class="" />
+		<a class="button btn btn-primary {% if (order_data['void_status'] == 1) %}disabled{% endif %}" id="btn-refund">{{ btn_refund }}</a>
+		<span class="btn btn-primary" id="img-loading-refund" style="display:none;"><i class="fa fa-cog fa-spin fa-lg"></i></span>
+		<a class="button btn btn-info {% if (order_data['capture_status'] == 1 or order_data['refund_status'] == 1 or order_data['void_status'] == 1 ) %}disabled{% endif %}" id="btn-release">{{ btn_release }}</a>
+		<span class="btn btn-primary" id="img-loading-release" style="display:none;"><i class="fa fa-cog fa-spin fa-lg"></i></span>
+    </td>
+  </tr>
+  <tr>
+    <td width="15%">{{ text_chargeable_amount }}:</td>
+    <td colspan="2" id="altapay-total-chargeable">{% if (status == 'released') %} {{ text_released }} {% else %} {{ charge }} {% endif %}</td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+
+var orderLines = [];
+var captureAmount = 0;
+var taxAmount = 0;
+
+function resetItems() {
+    orderLines = [];
+    captureAmount = 0;
+    taxAmount = 0;
+    calculateAmountFromOrderLines();
+    calculateTaxAmountFromOrderLines()
+    $(".itemQuantity").val(0);
+}
+
+
+$("#capture-amount, #refund-amount").bind('input', function(event){
+    orderLines = [];
+    captureAmount = event.target.value;
+    taxAmount = 0;
+});
+
+$(".itemQuantity").bind('input', function(event){
+    if(event.target.value < 0){
+        event.target.value=0;
+    }
+
+    var quantity = event.target.value;
+    var price = $(event.target).parent().parent().find(".itemPrice")[0].innerHTML;
+    var tax = $(event.target).parent().parent().find(".itemPriceWithTax")[0].innerHTML - price;
+    var description = $(event.target).parent().parent().find(".itemName")[0].innerHTML;
+    var itemId = $(event.target).parent().parent().find(".itemId")[0].innerHTML;
+    if(quantity == 0){
+        removeOrderLineByItemId(itemId);
+        calculateAmountFromOrderLines();
+        calculateTaxAmountFromOrderLines();
+        return;
+    }
+
+    var orderLineIndex = findOrderLineByDescription(description);
+    if(orderLineIndex == null){
+        var orderLine = {};
+        orderLine.description = description;
+        orderLine.itemId = itemId;
+        orderLine.quantity = quantity;
+        orderLine.unitPrice = price;
+        orderLine.taxAmount = tax;
+        orderLines.push(orderLine);
+        calculateAmountFromOrderLines();
+        calculateTaxAmountFromOrderLines();
+        return;
+    }
+    orderLines[orderLineIndex].quantity = quantity;
+    calculateAmountFromOrderLines();
+    calculateTaxAmountFromOrderLines();
+});
+
+$(".itemQuantity").bind('input', function(event) {
+
+});
+
+function removeOrderLineByItemId(itemId){
+    var orderLineIndex = findOrderLineByItemId(itemId);
+    if(orderLineIndex!=null) {
+        orderLines.splice(orderLineIndex, 1);
+    }
+}
+
+function findOrderLineByItemId(itemId){
+    for(var i = 0; i< orderLines.length; i++){
+        if(orderLines[i]['itemId']==itemId){
+            return i;
+        }
+    }
+    return null;
+}
+
+function findOrderLineByDescription(description){
+    for(var i = 0; i< orderLines.length; i++){
+        if(orderLines[i]['description']==description){
+            return i;
+        }
+    }
+    return null;
+}
+
+function calculateAmountFromOrderLines() {
+    var sum = 0;
+    for(var i = 0; i<orderLines.length; i++){
+        sum+=orderLines[i].quantity*(Number(orderLines[i].unitPrice) + Number(orderLines[i].taxAmount));
+    }
+    captureAmount = sum;
+    $("#capture-amount").val(captureAmount);
+    $("#refund-amount").val(captureAmount);
+    return captureAmount;
+}
+function calculateTaxAmountFromOrderLines() {
+    var sum = 0;
+    for(var i = 0; i<orderLines.length; i++){
+        sum+=orderLines[i].quantity*orderLines[i].taxAmount;
+    }
+    taxAmount=sum;
+    return taxAmount;
+}
+function addShipmentToOrderlines(){
+    if(orderLines.length>0){
+        var orderLine = {};
+        orderLine.description = "{{ order_data['shipping']['name'] }}";
+        orderLine.itemId = "shipping";
+        orderLine.quantity = 1;
+        orderLine.unitPrice =  {{ order_data['shipping']['price'] }}.toFixed(2);
+        orderLine.goodsType = "shipment";
+        orderLines.push(orderLine);
+    }
+}
+
+$("#btn-capture").bind('click', function () {
+    if (captureAmount>0 && confirm('{{ text_confirm_capture }}')) {
+        addShipmentToOrderlines();
+		var body = {
+            'order_id': {{ order_id }},
+            'capture_amount': captureAmount,
+            'tax_amount': taxAmount,
+            'orderLines': orderLines
+        }
+        if(body.taxAmount==0 || orderLines.length==0){
+            delete body.taxAmount;
+            delete body.orderLines;
+        }
+	    $.ajax({
+			type:'POST',
+			dataType: 'json',
+			data: body,
+
+			url: 'index.php?route=extension/payment/Altapay_{key}/capture&user_token={{ user_token }}',
+			beforeSend: function(xhr, opts) {
+				$('#btn-capture').attr('disabled','disabled');
+				$('#img-loading-capture').show();
+				$('#transaction-msg').hide();
+			},
+			success: function(data) {
+				$('#transaction-msg').addClass('alert');
+				$('#transaction-msg').removeClass('alert-danger alert-success'); 
+				if (data.status == 'ok') {					
+					$('#altapay-total-reserved').text(data.reserved);
+					$('#altapay-total-captured').text(data.captured);
+					$('#altapay-total-refunded').text(data.refunded);
+					$('#altapay-total-chargeable').text(data.chargeable);
+					$('#capture-amount').attr('placeholder', data.chargeable);
+					$('#transaction-msg').text(data.message);
+					$('#capture-amount').val('');
+					$('#transaction-msg').addClass('alert-success');
+					$('#btn-release').addClass('disabled');
+				} else {
+					// Show error
+					$('#transaction-msg').text(data.message);
+					$('#transaction-msg').addClass('alert-danger'); 
+				}
+				
+				$('#btn-capture').removeAttr('disabled');
+				$('#img-loading-capture').hide();
+				$('#transaction-msg').show();
+                resetItems();
+			}
+		});
+	}
+});
+
+
+$("#btn-refund").bind('click', function () {
+	if (captureAmount > 0 && confirm('{{ text_confirm_refund }}')) {
+        addShipmentToOrderlines();
+		$.ajax({
+			type:'POST',
+			dataType: 'json',
+			data: {
+				'order_id': {{ order_id }},
+				'refund_amount': captureAmount,
+                'orderLines': orderLines
+			},
+			url: 'index.php?route=extension/payment/Altapay_{key}/refund&user_token={{ user_token }}',
+			beforeSend: function(xhr, opts) {
+				$('#btn-refund').attr('disabled','disabled');
+				$('#img-loading-refund').show();
+				$('#transaction-msg').hide();
+			},
+			success: function(data) {		
+				$('#transaction-msg').addClass('alert');
+				$('#transaction-msg').removeClass('alert-danger alert-success'); 		
+				if (data.status == 'ok') {				
+					$('#altapay-total-reserved').text(data.reserved);
+					$('#altapay-total-captured').text(data.captured);
+					$('#altapay-total-refunded').text(data.refunded);
+					$('#altapay-total-chargeable').text(data.chargeable);
+					$('#capture-amount').attr('placeholder', data.chargeable);
+					$('#refund-amount').val('');
+					$('#transaction-msg').text(data.message);
+					$('#transaction-msg').addClass('alert-success'); 
+					$('#btn-release').addClass('disabled');
+				} else {
+					// Show error
+					$('#transaction-msg').text(data.message);
+					$('#transaction-msg').addClass('alert-danger'); 
+				}
+				
+				$('#btn-refund').removeAttr('disabled');
+				$('#img-loading-refund').hide();
+				$('#transaction-msg').show();
+                resetItems();
+			}
+		});
+	}
+});
+
+$("#btn-release").bind('click', function () {
+	if (confirm('{{ text_confirm_release }}')) {
+		$.ajax({
+			type:'POST',
+			dataType: 'json',
+			data: {
+				'order_id': {{ order_id }},
+			},
+			url: 'index.php?route=extension/payment/Altapay_{key}/release&user_token={{ user_token }}',
+			beforeSend: function(xhr, opts) {
+				$('#btn-release').attr('disabled','disabled');
+				$('#img-loading-release').show();
+				$('#transaction-msg').hide();
+			},
+			success: function(data) {		
+				$('#transaction-msg').addClass('alert');
+				$('#transaction-msg').removeClass('alert-danger alert-success'); 		
+				if (data.status == 'ok') {				
+					$('#altapay-total-reserved').text(data.reserved);
+					$('#altapay-total-captured').text(data.captured);
+					$('#altapay-total-refunded').text(data.refunded);
+					$('#altapay-total-chargeable').text(data.chargeable);
+					$('#capture-amount').attr('placeholder', data.chargeable);
+					$('#refund-amount').val('');
+					$('#transaction-msg').text(data.message);
+					$('#transaction-msg').addClass('alert-success'); 
+					$('#btn-release').addClass('disabled');
+					$('#btn-capture').addClass('disabled');
+					$('#btn-refund').addClass('disabled');
+				} else {
+					// Show error
+					$('#transaction-msg').text(data.message);
+					$('#transaction-msg').addClass('alert-danger'); 
+				}
+				
+				$('#btn-refund').removeAttr('disabled');
+				$('#img-loading-release').hide();
+				$('#transaction-msg').show();
+                resetItems();
+			}
+		});
+	}
+});
+</script>

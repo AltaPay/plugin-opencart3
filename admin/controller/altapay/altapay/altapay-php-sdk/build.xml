@@ -1,0 +1,46 @@
+<project name="PhpSDK" default="Build">
+    <target name="GetGitRevisionHash">
+        <exec executable="git" outputProperty="GitHash">
+            <arg value="rev-list"/>
+            <arg value="--tags"/>
+            <arg value="--max-count=1"/>
+        </exec>
+    </target>
+    <target name="GetGitLastTag" depends="GetGitRevisionHash">
+        <exec executable="git" outputproperty="GitLastTag">
+            <arg value="describe"/>
+            <arg value="--tags"/>
+            <arg value="${GitHash}"/>
+        </exec>
+    </target>
+
+    <target name="SetAltapayOmniVersion" depends="GetGitLastTag">
+        <echo file="lib/ALTAPAY_VERSION.php">&lt;?php
+// Update this with the latest GIT tag
+define('ALTAPAY_VERSION', 'PHPSDK/${GitLastTag}');</echo>
+    </target>
+
+    <target name="-ensureDist">
+        <delete dir="dist"/>
+        <mkdir dir="dist"/>
+    </target>
+
+    <target name="Build" depends="-ensureDist,SetAltapayOmniVersion">
+        <zip destfile="dist/PHPSDK_${GitLastTag}.zip">
+            <fileset dir=".">
+                <include name="lib/**/*" />
+                <include name="example/**/*" />
+
+                <exclude name=".idea/*" />
+                <exclude name=".settings/*" />
+                <exclude name="**/.git" />
+                <exclude name="**/.git/**/*" />
+                <exclude name="example/base.php" />
+                <exclude name="external/**/*" />
+                <exclude name="test/**/*" />
+                <exclude name="dist/**/*" />
+                <exclude name="*.*" />
+            </fileset>
+        </zip>
+    </target>
+</project>

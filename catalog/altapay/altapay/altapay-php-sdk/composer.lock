@@ -1,0 +1,43 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "af5ba1e35c7f2a5288421b3cc115fa69",
+    "packages": [],
+    "packages-dev": [
+        {
+            "name": "altapay/mockit",
+            "version": "dev-Mockit",
+            "source": {
+                "type": "svn",
+                "url": "svn+ssh://svn.earth.altapay.com/home/subversion/tools/trunk",
+                "reference": "/Mockit/@991"
+            },
+            "type": "library",
+            "time": "2017-06-28T15:33:04+00:00"
+        },
+        {
+            "name": "altapay/phpunit",
+            "version": "dev-PHPUnit",
+            "source": {
+                "type": "svn",
+                "url": "svn+ssh://svn.earth.altapay.com/home/subversion/tools/trunk",
+                "reference": "/PHPUnit/@947"
+            },
+            "type": "library",
+            "time": "2016-06-30T13:45:57+00:00"
+        }
+    ],
+    "aliases": [],
+    "minimum-stability": "dev",
+    "stability-flags": {
+        "altapay/mockit": 20,
+        "altapay/phpunit": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": []
+}

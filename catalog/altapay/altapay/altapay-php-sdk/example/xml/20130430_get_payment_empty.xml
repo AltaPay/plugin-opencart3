@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<APIResponse version="20130430">
+    <Header>
+        <Date>2014-03-21T22:00:03+01:00</Date>
+        <Path>API/transactions</Path>
+        <ErrorCode>0</ErrorCode>
+        <ErrorMessage></ErrorMessage>
+    </Header>
+    <Body>
+        <Result/>
+        <ResultFilter>
+            <TransactionIdEquals>14398494</TransactionIdEquals>
+        </ResultFilter>
+    </Body>
+</APIResponse>
