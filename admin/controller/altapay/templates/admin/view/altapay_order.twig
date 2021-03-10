@@ -34,23 +34,6 @@
     <td width="15%">{{ text_order_total }}:</td>
     <td colspan="2">{{ order_data['amount'] ~ ' ' ~order_data['currency_code'] }} {# TODO Convert to ISO3 #}</td>
   </tr>
-
-	{% if (payments) %}
-		{% for pay in payments %} 
-			{% set reserved = pay.getreservedAmount() %}
-			{% set captured = pay.getcapturedAmount() - pay.getrefundedAmount() %}					
-			{% set refunded = pay.getrefundedAmount() %}
-			{% set status = pay.getCurrentStatus() %}
-	
-			{% if (status == 'released') %}
-				{% set charge = 0 %}
-			{% else %} 
-				{% set charge = reserved - captured - refunded %}
-				{% if (charge <= 0) %} {% set charge = 0.00 %}{% endif %}
-			{% endif %}						
-		{% endfor %}
-	{% endif %}
-
    <tr>
     <td width="15%">{{ text_reserved_amount }}:</td>
     <td colspan="2" id="altapay-total-reserved">{{ reserved }}</td>
@@ -79,7 +62,7 @@
   </tr>
   <tr>
     <td width="15%">{{ text_chargeable_amount }}:</td>
-    <td colspan="2" id="altapay-total-chargeable">{% if (status == 'released') %} {{ text_released }} {% else %} {{ charge }} {% endif %}</td>
+    <td colspan="2" id="altapay-total-chargeable">{% if (status == 'released') %} {{ text_released }} {% else %} {{ chargeable }} {% endif %}</td>
   </tr>
 </table>
 
@@ -189,13 +172,15 @@ function calculateTaxAmountFromOrderLines() {
 }
 function addShipmentToOrderlines(){
     if(orderLines.length>0){
-        var orderLine = {};
-        orderLine.description = "{{ order_data['shipping']['name'] }}";
-        orderLine.itemId = "shipping";
-        orderLine.quantity = 1;
-        orderLine.unitPrice =  {{ order_data['shipping']['price'] }}.toFixed(2);
-        orderLine.goodsType = "shipment";
-        orderLines.push(orderLine);
+        {% if price in order_data|keys %}
+            var orderLine = {};
+            orderLine.description = "{{ order_data['shipping']['name'] }}";
+            orderLine.itemId = "shipping";
+            orderLine.quantity = 1;
+            orderLine.unitPrice =  {{ order_data['shipping']['price'] }}.toFixed(2);
+            orderLine.goodsType = "shipment";
+            orderLines.push(orderLine);
+        {% endif %}
     }
 }
 
