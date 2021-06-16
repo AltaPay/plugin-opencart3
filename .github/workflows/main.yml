@@ -43,7 +43,7 @@ jobs:
 
       # Select a terraform workspace
       - name: Terraform workspace
-        run: terraform workspace select wordpress
+        run: terraform workspace select opencart
         working-directory: ../plugin-infrastructure/provision/plugins
 
 
