@@ -10,8 +10,8 @@ Feel free to contact our support team (support@altapay.com) if you need any assi
 
 ### Prerequisites: 
 
-1) OpenCart 3.x should be installed with the default theme on publically accessible URL
-2) Cypress should be installed
+* OpenCart 3.x should be installed with the default theme on publically accessible URL
+* Cypress should be installed
 
 ### Steps 
 
