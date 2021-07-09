@@ -65,7 +65,16 @@ jobs:
         uses: jakejarvis/wait-action@master
         with:
           time: '20s'
-          
+
+      # Setting branch name for running cypress tests
+      - name: Set env TEST_BRANCH_NAME
+        run: |
+            if [[ $GITHUB_EVENT_NAME == 'pull_request' ]]; then
+                echo "TEST_BRANCH_NAME=${{ github.head_ref }}" >> "$GITHUB_ENV"
+            else
+                echo "TEST_BRANCH_NAME=main" >> "$GITHUB_ENV"
+            fi  	
+
           
       #Run Ansible playbook
       - name: Run playbook
@@ -77,7 +86,7 @@ jobs:
           options: |
             -u ubuntu
             -i inventory
-            --extra-vars "gatewayURL=${{ secrets.GATEWAYURL }} gatewayUser=${{ secrets.GATEWAYUSER }} gatewayPass=${{ secrets.GATEWAYPASS }}"   
+            --extra-vars "branch_name=${{env.TEST_BRANCH_NAME}} gatewayURL=${{ secrets.GATEWAYURL }} gatewayUser=${{ secrets.GATEWAYUSER }} gatewayPass=${{ secrets.GATEWAYPASS }}"   
 
 
 
@@ -91,20 +100,11 @@ jobs:
         working-directory: ../plugin-infrastructure/deploy/plugins
 
 
-      # Setting branch name for running cypress tests
-      - name: Set env TEST_BRANCH_NAME
-        run: |
-            if [[ $GITHUB_EVENT_NAME == 'pull_request' ]]; then
-                echo "TEST_BRANCH_NAME=${{ github.head_ref }}" >> "$GITHUB_ENV"
-            else
-                echo "TEST_BRANCH_NAME=main" >> "$GITHUB_ENV"
-            fi  	
-
       # Run Cypress tests   
       - uses: actions/checkout@v1
         with:
           repository: AltaPay/plugin-opencart3
-          ref: 'origin/cypress-test'
+          ref: 'origin/main'
           path: plugin-opencart3
 
       - name: Create Cypress fixture config json
