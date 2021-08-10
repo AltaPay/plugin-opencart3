@@ -19,7 +19,7 @@ class Order
     addproduct(){
         cy.get(':nth-child(1) > .product-thumb > .image > a > .img-responsive').click()
         cy.get('#button-cart').click()
-        cy.get('.alert > [href="http://54.246.153.166/opencart/index.php?route=checkout/cart"]').click()
+        cy.get('.alert').contains('shopping cart').click()
         cy.get('.pull-right > .btn').click()
         cy.get(':nth-child(4) > label > input').click()
         cy.get('#button-account').click()
@@ -33,14 +33,15 @@ class Order
         cy.get('#input-payment-country').select('Denmark')
         cy.get('#input-payment-zone').select('Fyn')
         cy.get('#input-payment-zone').select('Fyn')
-        cy.get('#button-guest').click()
+        cy.get('#button-guest').click().wait(3000)
         
         
     }
 
-    cc_payment(){
+    cc_payment(CC_TERMINAL_NAME){
         
-        cy.contains('EmbraceIT Test Terminal').click()
+        cy.contains(CC_TERMINAL_NAME).click({force: true})
+
         cy.get('[type="checkbox"]').click()
         cy.get('[type="checkbox"]')
         cy.get('#button-payment-method').click()
@@ -56,9 +57,9 @@ class Order
     
     }
     
-    klarna_payment(){
+    klarna_payment(KLARNA_DKK_TERMINAL_NAME){
 
-        cy.contains('EmbraceIT Klarna DKK Test Terminal').click()
+        cy.contains(KLARNA_DKK_TERMINAL_NAME).click({force: true})
         cy.get('[type="checkbox"]').click()
         cy.get('[type="checkbox"]')
         cy.get('#button-payment-method').click()
