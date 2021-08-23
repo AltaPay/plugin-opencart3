@@ -81,144 +81,143 @@ try {
             $termKeyWithUnderscore = str_replace(' ', '_', $termName);
 
             // Add settings for each terminal
-                addSettingField($db, 'payment_Altapay_' . $termKey, 'payment_Altapay_' . $termKey . '_title', $termName);
-                addSettingField($db, 'payment_Altapay_' . $termKey, 'payment_Altapay_' . $termKey . '_currency_id', $currencyId);
-                addSettingField($db, 'payment_Altapay_' . $termKey, 'payment_Altapay_' . $termKey . '_order_status_id', '15');
-                addSettingField($db, 'payment_Altapay_' . $termKey, 'payment_Altapay_' . $termKey . '_geo_zone_id', '0');
-                addSettingField($db, 'payment_Altapay_' . $termKey, 'payment_Altapay_' . $termKey . '_payment_action', 'authorize');
-                addSettingField($db, 'payment_Altapay_' . $termKey, 'payment_Altapay_' . $termKey . '_status', '1');
-                addSettingField($db, 'payment_Altapay_' . $termKey, 'payment_Altapay_' . $termKey . '_sort_order', $i);
-                addExtensionField($db, 'payment', 'Altapay_' . $termKey);
+            addSettingField($db, 'payment_Altapay_' . $termKey, 'payment_Altapay_' . $termKey . '_title', $termName);
+            addSettingField($db, 'payment_Altapay_' . $termKey, 'payment_Altapay_' . $termKey . '_currency_id', $currencyId);
+            addSettingField($db, 'payment_Altapay_' . $termKey, 'payment_Altapay_' . $termKey . '_order_status_id', '15');
+            addSettingField($db, 'payment_Altapay_' . $termKey, 'payment_Altapay_' . $termKey . '_geo_zone_id', '0');
+            addSettingField($db, 'payment_Altapay_' . $termKey, 'payment_Altapay_' . $termKey . '_payment_action', 'authorize');
+            addSettingField($db, 'payment_Altapay_' . $termKey, 'payment_Altapay_' . $termKey . '_status', '1');
+            addSettingField($db, 'payment_Altapay_' . $termKey, 'payment_Altapay_' . $termKey . '_sort_order', $i);
+            addExtensionField($db, 'payment', 'Altapay_' . $termKey);
 
-                // Check if file exists
-                $dir = __DIR__;
-                $tmpdir = sys_get_temp_dir();
-                // ADMIN templates
-                $path = $dir . '/admin/controller/extension/payment/Altapay_' . $termKey . '.php';
+            // Check if file exists
+            $dir = __DIR__;
+            $tmpdir = sys_get_temp_dir();
+            // ADMIN templates
+            $path = $dir . '/admin/controller/extension/payment/Altapay_' . $termKey . '.php';
 
-                if (file_exists($path)) {
-                    unlink($path);
-                }
+            if (file_exists($path)) {
+                unlink($path);
+            }
 
-                $language_path = $dir . '/admin/language/en-gb/extension/payment/Altapay_' . $termKey . '.php';
-                if (file_exists($language_path)) {
-                    unlink($language_path);
-                }
+            $language_path = $dir . '/admin/language/en-gb/extension/payment/Altapay_' . $termKey . '.php';
+            if (file_exists($language_path)) {
+                unlink($language_path);
+            }
 
-                $view_template_path = $dir . '/admin/view/template/extension/payment/Altapay_' . $termKey . '.twig';
-                if (file_exists($view_template_path)) {
-                    unlink($view_template_path);
-                }
+            $view_template_path = $dir . '/admin/view/template/extension/payment/Altapay_' . $termKey . '.twig';
+            if (file_exists($view_template_path)) {
+                unlink($view_template_path);
+            }
 
-                $order_view_template_path = $dir . '/admin/view/template/extension/payment/Altapay_' . $termKey . '_order.twig';
-                if (file_exists($order_view_template_path)) {
-                    unlink($order_view_template_path);
-                }
+            $order_view_template_path = $dir . '/admin/view/template/extension/payment/Altapay_' . $termKey . '_order.twig';
+            if (file_exists($order_view_template_path)) {
+                unlink($order_view_template_path);
+            }
 
-                $payment_template = file_get_contents($dir . '/admin/controller/altapay/templates/admin/controller/altapay.twig.php');
-                $payment_template_language = file_get_contents($dir . '/admin/controller/altapay/templates/admin/language/altapay.twig.php');
-                $payment_template_view_template = file_get_contents($dir . '/admin/controller/altapay/templates/admin/view/altapay.twig');
-                $payment_template_order_view_template = file_get_contents($dir . '/admin/controller/altapay/templates/admin/view/altapay_order.twig');
+            $payment_template = file_get_contents($dir . '/admin/controller/altapay/templates/admin/controller/altapay.twig.php');
+            $payment_template_language = file_get_contents($dir . '/admin/controller/altapay/templates/admin/language/altapay.twig.php');
+            $payment_template_view_template = file_get_contents($dir . '/admin/controller/altapay/templates/admin/view/altapay.twig');
+            $payment_template_order_view_template = file_get_contents($dir . '/admin/controller/altapay/templates/admin/view/altapay_order.twig');
 
-                // FRONTEND / catalog templates
-                $frontend_model_path = $dir . '/catalog/model/extension/payment/Altapay_' . $termKey . '.php';
-                if (file_exists($frontend_model_path)) {
-                    unlink($frontend_model_path);
-                }
+            // FRONTEND / catalog templates
+            $frontend_model_path = $dir . '/catalog/model/extension/payment/Altapay_' . $termKey . '.php';
+            if (file_exists($frontend_model_path)) {
+                unlink($frontend_model_path);
+            }
 
-                $frontend_language_path = $dir . '/catalog/language/en-gb/extension/payment/Altapay_' . $termKey . '.php';
-                if (file_exists($frontend_language_path)) {
-                    unlink($frontend_language_path);
-                }
+            $frontend_language_path = $dir . '/catalog/language/en-gb/extension/payment/Altapay_' . $termKey . '.php';
+            if (file_exists($frontend_language_path)) {
+                unlink($frontend_language_path);
+            }
 
-                $frontend_controller_path = $dir . '/catalog/controller/extension/payment/Altapay_' . $termKey . '.php';
-                if (file_exists($frontend_controller_path)) {
-                    unlink($frontend_controller_path);
-                }
+            $frontend_controller_path = $dir . '/catalog/controller/extension/payment/Altapay_' . $termKey . '.php';
+            if (file_exists($frontend_controller_path)) {
+                unlink($frontend_controller_path);
+            }
 
-                $frontend_view_path = $dir . '/catalog/view/theme/default/template/extension/payment/Altapay_' . $termKey . '.twig';
-                if (file_exists($frontend_view_path)) {
-                    unlink($frontend_view_path);
-                }
+            $frontend_view_path = $dir . '/catalog/view/theme/default/template/extension/payment/Altapay_' . $termKey . '.twig';
+            if (file_exists($frontend_view_path)) {
+                unlink($frontend_view_path);
+            }
 
-                $frontend_payment_model = file_get_contents($dir . '/admin/controller/altapay/templates/catalog/model/altapay.twig.php');
-                $frontend_template_language = file_get_contents($dir . '/admin/controller/altapay/templates/catalog/language/altapay.twig.php');
-                $frontend_template_controller = file_get_contents($dir . '/admin/controller/altapay/templates/catalog/controller/altapay.twig.php');
-                $frontend_template_view = file_get_contents($dir . '/admin/controller/altapay/templates/catalog/view/altapay_button.twig');
+            $frontend_payment_model = file_get_contents($dir . '/admin/controller/altapay/templates/catalog/model/altapay.twig.php');
+            $frontend_template_language = file_get_contents($dir . '/admin/controller/altapay/templates/catalog/language/altapay.twig.php');
+            $frontend_template_controller = file_get_contents($dir . '/admin/controller/altapay/templates/catalog/controller/altapay.twig.php');
+            $frontend_template_view = file_get_contents($dir . '/admin/controller/altapay/templates/catalog/view/altapay_button.twig');
 
-                // Replace patterns
-                $content = str_replace(array('{key}', '{_key_}', '{name}'), array($termKey, $termKeyWithUnderscore, $termName), $payment_template);
-                $payment_dir = $dir . '/admin/controller/extension/payment';
+            // Replace patterns
+            $content = str_replace(array('{key}', '{_key_}', '{name}'), array($termKey, $termKeyWithUnderscore, $termName), $payment_template);
+            $payment_dir = $dir . '/admin/controller/extension/payment';
 
-                // Check if terminals folder is writable
-                if ($payment_dir) {
-                    file_put_contents($path, $content);
-                    chmod($path, 0664);
-                }
+            // Check if terminals folder is writable
+            if ($payment_dir) {
+                file_put_contents($path, $content);
+                chmod($path, 0664);
+            }
 
-                $language_content = str_replace(array('{key}', '{_key_}', '{name}'), array($termKey, $termKeyWithUnderscore, $termName), $payment_template_language);
-                $language_dir = $dir . '/admin/language/en-gb/extension/payment';
+            $language_content = str_replace(array('{key}', '{_key_}', '{name}'), array($termKey, $termKeyWithUnderscore, $termName), $payment_template_language);
+            $language_dir = $dir . '/admin/language/en-gb/extension/payment';
 
-                // Check if language folder is writable
-                if ($language_dir) {
-                    file_put_contents($language_path, $language_content);
-                    chmod($language_path, 0664);
-                }
+            // Check if language folder is writable
+            if ($language_dir) {
+                file_put_contents($language_path, $language_content);
+                chmod($language_path, 0664);
+            }
 
-                $view_template_content = str_replace(array('{key}', '{_key_}', '{name}'), array($termKey, $termKeyWithUnderscore, $termName), $payment_template_view_template);
-                $view_template_dir = $dir . '/admin/view/template/extension/payment';
+            $view_template_content = str_replace(array('{key}', '{_key_}', '{name}'), array($termKey, $termKeyWithUnderscore, $termName), $payment_template_view_template);
+            $view_template_dir = $dir . '/admin/view/template/extension/payment';
 
-                // Check if language folder is writable
-                if (is_writable($view_template_dir)) {
-                    file_put_contents($view_template_path, $view_template_content);
-                    chmod($view_template_path, 0664);
-                }
+            // Check if language folder is writable
+            if (is_writable($view_template_dir)) {
+                file_put_contents($view_template_path, $view_template_content);
+                chmod($view_template_path, 0664);
+            }
 
-                $order_view_template_content = str_replace(array('{key}', '{_key_}', '{name}'), array($termKey, $termKeyWithUnderscore, $termName), $payment_template_order_view_template);
-                $order_view_template_dir = $dir . '/admin/view/template/extension/payment';
+            $order_view_template_content = str_replace(array('{key}', '{_key_}', '{name}'), array($termKey, $termKeyWithUnderscore, $termName), $payment_template_order_view_template);
+            $order_view_template_dir = $dir . '/admin/view/template/extension/payment';
 
-                // Check if language folder is writable
-                if (is_writable($order_view_template_dir)) {
-                    file_put_contents($order_view_template_path, $order_view_template_content);
-                    chmod($order_view_template_path, 0664);
-                }
+            // Check if language folder is writable
+            if (is_writable($order_view_template_dir)) {
+                file_put_contents($order_view_template_path, $order_view_template_content);
+                chmod($order_view_template_path, 0664);
+            }
 
-                // FRONTEND Templates
-                $frontend_model_content = str_replace(array('{key}', '{_key_}', '{name}'), array($termKey, $termKeyWithUnderscore, $termName), $frontend_payment_model);
-                $frontend_model_dir = $dir . '/catalog/model/extension/payment';
-                // Check if language folder is writable
-                if (is_writable($frontend_model_dir)) {
-                    file_put_contents($frontend_model_path, $frontend_model_content);
-                    chmod($frontend_model_path, 0664);
-                }
+            // FRONTEND Templates
+            $frontend_model_content = str_replace(array('{key}', '{_key_}', '{name}'), array($termKey, $termKeyWithUnderscore, $termName), $frontend_payment_model);
+            $frontend_model_dir = $dir . '/catalog/model/extension/payment';
+            // Check if language folder is writable
+            if (is_writable($frontend_model_dir)) {
+                file_put_contents($frontend_model_path, $frontend_model_content);
+                chmod($frontend_model_path, 0664);
+            }
 
-                $frontend_language_content = str_replace(array('{key}', '{_key_}', '{name}'), array($termKey, $termKeyWithUnderscore, $termName), $frontend_template_language);
-                $frontend_language_dir = $dir . '/catalog/language/en-gb/extension/payment';
-                // Check if language folder is writable
-                if (is_writable($frontend_language_dir)) {
-                    file_put_contents($frontend_language_path, $frontend_language_content);
-                    chmod($frontend_language_path, 0664);
-                }
+            $frontend_language_content = str_replace(array('{key}', '{_key_}', '{name}'), array($termKey, $termKeyWithUnderscore, $termName), $frontend_template_language);
+            $frontend_language_dir = $dir . '/catalog/language/en-gb/extension/payment';
+            // Check if language folder is writable
+            if (is_writable($frontend_language_dir)) {
+                file_put_contents($frontend_language_path, $frontend_language_content);
+                chmod($frontend_language_path, 0664);
+            }
 
-                $frontend_controller_content = str_replace(array('{key}', '{_key_}', '{name}'), array($termKey, $termKeyWithUnderscore, $termName), $frontend_template_controller);
-                $frontend_controller_dir = $dir . '/catalog/controller/extension/payment';
-                // Check if language folder is writable
-                if (is_writable($frontend_controller_dir)) {
-                    file_put_contents($frontend_controller_path, $frontend_controller_content);
-                    chmod($frontend_controller_path, 0664);
-                }
+            $frontend_controller_content = str_replace(array('{key}', '{_key_}', '{name}'), array($termKey, $termKeyWithUnderscore, $termName), $frontend_template_controller);
+            $frontend_controller_dir = $dir . '/catalog/controller/extension/payment';
+            // Check if language folder is writable
+            if (is_writable($frontend_controller_dir)) {
+                file_put_contents($frontend_controller_path, $frontend_controller_content);
+                chmod($frontend_controller_path, 0664);
+            }
 
-                $frontend_view_content = str_replace(array('{key}', '{_key_}', '{name}'), array($termKey, $termKeyWithUnderscore, $termName), $frontend_template_view);
-                $frontend_view_dir = $dir . '/catalog/view/theme/default/template/extension/payment';
-                // Check if language folder is writable
-                if (is_writable($frontend_view_dir)) {
-                    file_put_contents($frontend_view_path, $frontend_view_content);
-                    chmod($frontend_view_path, 0664);
-                }
-                $i++;
+            $frontend_view_content = str_replace(array('{key}', '{_key_}', '{name}'), array($termKey, $termKeyWithUnderscore, $termName), $frontend_template_view);
+            $frontend_view_dir = $dir . '/catalog/view/theme/default/template/extension/payment';
+            // Check if language folder is writable
+            if (is_writable($frontend_view_dir)) {
+                file_put_contents($frontend_view_path, $frontend_view_content);
+                chmod($frontend_view_path, 0664);
+            }
+            $i++;
         }
     }
-
 } catch (ClientException $e) {
     echo "Error:" . $e->getMessage();
 } catch (Exception $e) {
