@@ -4,6 +4,10 @@ admin/config.php
 dist/
 !index.html
 
+tests/integration-tests/node_modules/
+tests/integration-tests/cypress/screenshots/
+tests/integration-tests/cypress/videos/
+
 download/
 image/data/
 image/cache/
