@@ -46,15 +46,19 @@ $loader->model('setting/setting');
 $loader->model('design/layout');
 $loader->model('extension/module/altapay');
 
+// API settings
 addSettingField($db, 'module_altapay', 'module_altapay_gateway_url', $url);
 addSettingField($db, 'module_altapay', 'module_altapay_gateway_username', $apiUser);
 addSettingField($db, 'module_altapay', 'module_altapay_gateway_password', $apiPass);
 addSettingField($db, 'module_altapay', 'module_altapay_status', 1);
-addSettingField($db, 'config', 'config_currency', 'DKK');
-addExtensionField($db, 'module', 'altapay');
+// Add currency field
 $currencyId = addCurrencyField($db, "Danish Krone", "DKK", "DKK");
+// Set currency
+addSettingField($db, 'config', 'config_currency', 'DKK');
+// Register module
+addExtensionField($db, 'module', 'altapay');
 
-// create orders table
+// Create orders table
 $db->query("CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "altapay_orders` ( `altapay_order_id` int(11) NOT NULL AUTO_INCREMENT, `order_id` int(11) NOT NULL, `created` DATETIME NOT NULL, `modified` DATETIME NOT NULL, `amount` DECIMAL( 10, 2 ) NOT NULL, `currency_code` CHAR(3) NOT NULL, `transaction_id` VARCHAR(24) NOT NULL, `capture_status` INT(1) DEFAULT NULL, `void_status` INT(1) DEFAULT NULL, `refund_status` INT(1) DEFAULT NULL, PRIMARY KEY (`altapay_order_id`) ) ENGINE=MyISAM DEFAULT COLLATE=utf8_general_ci;");
 
 try {
@@ -76,8 +80,7 @@ try {
             $termKey = implode('', $output[1]);
             $termKeyWithUnderscore = str_replace(' ', '_', $termName);
 
-            if ($termKey == 'EITTT') {
-
+            // Add settings for each terminal
                 addSettingField($db, 'payment_Altapay_' . $termKey, 'payment_Altapay_' . $termKey . '_title', $termName);
                 addSettingField($db, 'payment_Altapay_' . $termKey, 'payment_Altapay_' . $termKey . '_currency_id', $currencyId);
                 addSettingField($db, 'payment_Altapay_' . $termKey, 'payment_Altapay_' . $termKey . '_order_status_id', '15');
@@ -213,7 +216,6 @@ try {
                     chmod($frontend_view_path, 0664);
                 }
                 $i++;
-            }
         }
     }
 
