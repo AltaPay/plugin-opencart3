@@ -45,6 +45,8 @@ $registry->set('db', $db);
 $loader->model('setting/setting');
 $loader->model('design/layout');
 $loader->model('extension/module/altapay');
+$loader->model('user/user_group');
+$modelUserGroup = new ModelUserUserGroup($registry);
 
 // API settings
 addSettingField($db, 'module_altapay', 'module_altapay_gateway_url', $url);
@@ -215,9 +217,35 @@ try {
                 file_put_contents($frontend_view_path, $frontend_view_content);
                 chmod($frontend_view_path, 0664);
             }
+
+            // Add Access/Modify permissions to the admin user group
+            $modelUserGroup->addPermission(1, 'access', 'extension/payment/Altapay_' . $termKey);
+            $modelUserGroup->addPermission(1, 'modify', 'extension/payment/Altapay_' . $termKey);
+
             $i++;
         }
     }
+
+    // Add Access/Modify permissions to the admin user group
+    $modelUserGroup->addPermission(1, 'access', 'altapay/templates/admin/controller/altapay.twig');
+    $modelUserGroup->addPermission(1, 'modify', 'altapay/templates/admin/controller/altapay.twig');
+    $modelUserGroup->addPermission(1, 'access', 'altapay/templates/admin/language/altapay.twig');
+    $modelUserGroup->addPermission(1, 'modify', 'altapay/templates/admin/language/altapay.twig');
+    $modelUserGroup->addPermission(1, 'access', 'altapay/templates/admin/view/altapay');
+    $modelUserGroup->addPermission(1, 'modify', 'altapay/templates/admin/view/altapay');
+    $modelUserGroup->addPermission(1, 'access', 'altapay/templates/admin/view/altapay_order');
+    $modelUserGroup->addPermission(1, 'modify', 'altapay/templates/admin/view/altapay_order');
+    $modelUserGroup->addPermission(1, 'access', 'altapay/templates/catalog/controller/altapay.twig');
+    $modelUserGroup->addPermission(1, 'modify', 'altapay/templates/catalog/controller/altapay.twig');
+    $modelUserGroup->addPermission(1, 'access', 'altapay/templates/catalog/language/altapay.twig');
+    $modelUserGroup->addPermission(1, 'modify', 'altapay/templates/catalog/language/altapay.twig');
+    $modelUserGroup->addPermission(1, 'access', 'altapay/templates/catalog/model/altapay.twig');
+    $modelUserGroup->addPermission(1, 'modify', 'altapay/templates/catalog/model/altapay.twig');
+    $modelUserGroup->addPermission(1, 'access', 'altapay/templates/catalog/view/altapay_button');
+    $modelUserGroup->addPermission(1, 'modify', 'altapay/templates/catalog/view/altapay_button');
+    $modelUserGroup->addPermission(1, 'access', 'extension/module/altapay');
+    $modelUserGroup->addPermission(1, 'modify', 'extension/module/altapay');
+    
 } catch (ClientException $e) {
     echo "Error:" . $e->getMessage();
 } catch (Exception $e) {
