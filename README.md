@@ -3,8 +3,10 @@
 ## Supported versions
 OpenCart 3.x
 
-## Contact
-Feel free to contact our support team (support@altapay.com) if you need any assistance.
+## How to Build
+Run the below command to create the zip file in the dist folder.
+
+    ./docker/build-package.sh
 
 ## How to run cypress tests
 
@@ -26,3 +28,14 @@ Follow these steps to load and save the terminal configurations from the gateway
 * Run the file with the below command
 
     $ php altapay_config.php
+
+## License
+
+Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
+
+## Documentation
+
+For more details please see [AltaPay docs](https://documentation.altapay.com/)
+
+## Contact
+Feel free to contact our support team (support@altapay.com) if you need any assistance.
