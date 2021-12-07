@@ -133,7 +133,7 @@ In the OpenCart backend, follow the instructions below:
 
 **You can find the CMS logs by following the below steps:**
 
-From Admin Dashboard navigate to **"WooCommerce > Status > Logs"** tab
+From Admin Dashboard navigate to **"System > Maintenance > Error Logs"**
 
 **Web server error logs**
 
