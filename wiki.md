@@ -39,11 +39,16 @@ We highly recommend gathering all the below information before starting the inst
 ## Uploading the build package:
 - From the admin panel, navigate to **'Extensions' > 'Installer'** and click on **"Upload"**.
 - Choose the 'altapay.ocmod.zip' file.
- ![opencart_extension_upload](docs/opencart_extension_upload.png)
+
+ ![opencart_extension_upload](https://github.com/AltaPay/plugin-opencart3/blob/main/docs/opencart_extension_upload.png)
+
 - From the menu, go to **'Extensions' > 'Extensions'** and choose  **'Modules'** from the extension type dropdown.
- ![opencart_select_extension_module](docs/opencart_select_extension_module.png)
+
+ ![opencart_select_extension_module](https://github.com/AltaPay/plugin-opencart3/blob/main/docs/opencart_select_extension_module.png)
+
 - In the AltaPay line, click on Install (the green plus icon) button.
- ![opencart_module_install](docs/opencart_module_install.png)
+
+ ![opencart_module_install](https://github.com/AltaPay/plugin-opencart3/blob/main/docs/opencart_module_install.png)
 
 # Configuration
 
@@ -54,22 +59,32 @@ The standard configuration connects the plugin with the test gateway. Take the f
 ## Connect the plugin to the custom payment gateway
 
 - From the menu, go to **'Extensions' > 'Extensions'** and choose  **'Modules'** from the extension type dropdown.
-  ![opencart_select_extension_module](docs/opencart_select_extension_module.png)
+
+  ![opencart_select_extension_module](https://github.com/AltaPay/plugin-opencart3/blob/main/docs/opencart_select_extension_module.png)
+
 - In the AltaPay line, click on Edit.
 - Fill in the credentials, change the **Gateway status** to **Enabled** and click on 'Save'.
- ![opencart_altapay_enable](docs/opencart_altapay_enable.png)
+
+ ![opencart_altapay_enable](https://github.com/AltaPay/plugin-opencart3/blob/main/docs/opencart_altapay_enable.png)
+
 - Click on **Refresh Terminals**
- ![opencart_altapay_refresh_terminals](docs/opencart_altapay_refresh_terminals.png)
+
+ ![opencart_altapay_refresh_terminals](https://github.com/AltaPay/plugin-opencart3/blob/main/docs/opencart_altapay_refresh_terminals.png)
 
 
 ## Configure the terminals for the checkout page
 
 - From the menu, go to **'Extensions' > 'Extensions'** and choose  **'Payments'** from the extension type dropdown.
-  ![opencart_select_extension_payments](docs/opencart_select_extension_payments.png)
+
+  ![opencart_select_extension_payments](https://github.com/AltaPay/plugin-opencart3/blob/main/docs/opencart_select_extension_payments.png)
+
 - You'll see all AltaPay terminals here, click the install (the green plus icon) button for all required terminals.
-  ![opencart_altapay_terminal_install](docs/opencart_altapay_terminal_install.png)
+
+  ![opencart_altapay_terminal_install](https://github.com/AltaPay/plugin-opencart3/blob/main/docs/opencart_altapay_terminal_install.png)
+
 - Next, you need to set up & enable each terminal. Click the Edit button and update the details, using the notes below and screenshot for guidance.
-  ![opencart_altapay_terminal_enable](docs/opencart_altapay_terminal_enable.png)
+
+  ![opencart_altapay_terminal_enable](https://github.com/AltaPay/plugin-opencart3/blob/main/docs/opencart_altapay_terminal_enable.png)
 
 <table>
 <tbody>
@@ -94,12 +109,12 @@ The standard configuration connects the plugin with the test gateway. Take the f
 
 - Save the changes.
 - Now you are ready to process transactions through AltaPay.
- ![opencart_checkout_page](docs/opencart_checkout_page.png)
+
+ ![opencart_checkout_page](https://github.com/AltaPay/plugin-opencart3/blob/main/docs/opencart_checkout_page.png)
 
 
 > _Note: In the case of a new installation, remember to refresh the terminals (go to **‘Extensions’ > ‘Extensions’ > ‘Modules’ >** edit **‘AltaPay’** and click on **‘Refresh terminals’**)._
-![opencart_altapay_refresh_terminals](docs/opencart_altapay_refresh_terminals.png)
-
+![opencart_altapay_refresh_terminals](https://github.com/AltaPay/plugin-opencart3/blob/main/docs/opencart_altapay_refresh_terminals.png)
 
 # Supported versions
 
@@ -126,7 +141,7 @@ In the OpenCart backend, follow the instructions below:
 - Scroll down to see the ‘Order History’ section
 - The merchant error message is located in the ‘Comment’ column
 
-![opencart_troubleshooting](docs/opencart_troubleshooting.png)
+![opencart_troubleshooting](https://github.com/AltaPay/plugin-opencart3/blob/main/docs/opencart_troubleshooting.png)
 
 
 ## Providing error logs to support team

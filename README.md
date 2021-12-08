@@ -35,7 +35,4 @@ Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
 
 ## Documentation
 
-For more details please see [AltaPay docs](https://documentation.altapay.com/)
-
-## Contact
-Feel free to contact our support team (support@altapay.com) if you need any assistance.
+For more details please see [docs](https://github.com/AltaPay/plugin-opencart3/wiki)
