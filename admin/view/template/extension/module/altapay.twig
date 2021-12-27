@@ -2,18 +2,20 @@
 <div id="content">
 	<div class="page-header">
 		<div class="container-fluid">
-			{% if (save_success or refresh_terminals_success) %} 
+			{% if (save_success or refresh_terminals_success or sync_terminals_success) %}
 			<div class="alert alert-success">
 				<i class="fa fa-check-circle"></i>
 				{{ save_success }}
 				{{ refresh_terminals_success }}
+				{{ sync_terminals_success }}
 				<button type="button" class="close" data-dismiss="alert">×</button>
 			</div>
 			{% endif %} 
-			{% if (refresh_terminals_error) %} 
+			{% if (refresh_terminals_error or sync_terminals_error) %}
 			<div class="alert alert-danger">
 				<i class="fa fa-info-circle"></i>
 				{{ refresh_terminals_error }} 
+				{{ sync_terminals_error }}
 				<button type="button" class="close" data-dismiss="alert">×</button>
 			</div>
 			{% endif %} 
@@ -84,6 +86,10 @@
 						<div class="col-sm-10">
 							<button type="submit" class="btn btn-success" name="terminalrefresh" title="{{ button_refresh_terminals }}">
 								<i class="fa fa-refresh" aria-hidden="true"></i>&nbsp{{ button_refresh_terminals }}
+							</button>
+
+							<button type="submit" class="btn btn-info" name="terminalsync" title="{{ button_sync_terminals }}">
+								<i class="fa fa-cogs" aria-hidden="true"></i>&nbsp{{ button_sync_terminals }}
 							</button>
 						</div>
 					</div>
