@@ -125,7 +125,7 @@ If you face any issue click on **Refresh connection** button, this will fetch th
 ## Synchronize payment methods
 
 To synchronize the terminals with the gateway, click on the **Sync terminals** button. This will fetch the latest terminals from the gateway and will automatically configure based on the store country.
-
+![synchronize_payment_methods](docs/synchronize_payment_methods.png)
 
 # Supported versions
 
