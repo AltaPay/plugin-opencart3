@@ -221,7 +221,7 @@ try {
             $i++;
         }
     }
-    if($i > 0){
+    if($i > 1){
         addSettingField($db, 'altapay_terminals_refreshed', 'altapay_terminals_refreshed', 1);
     }
     // Add Access/Modify permissions to the admin user group

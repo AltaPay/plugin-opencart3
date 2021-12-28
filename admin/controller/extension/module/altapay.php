@@ -78,8 +78,10 @@ class ControllerExtensionModuleAltapay extends Controller
                                         $i++;
                                     }
                                 }
-                                if ($i > 0) {
+                                if ($i > 1) {
                                     $data['sync_terminals_success'] = $this->language->get('text_sync_success');
+                                }else{
+                                    $data['sync_terminals_success'] = $this->language->get('text_sync_no_matching_terminals_error');
                                 }
                             }
                         } catch (ClientException $e) {
