@@ -60,7 +60,6 @@ class ControllerExtensionModuleAltapay extends Controller
                                         $termName = str_replace($forbiddenChars, "", $terminal->Title);
                                         preg_match_all("#([A-Z]+)#", str_replace(' ', '', ucwords($termName)), $output);
                                         $termKey = implode('', $output[1]);
-                                        $termKeyWithUnderscore = str_replace(' ', '_', $termName);
 
                                         // Add settings for each terminal
                                         $this->addSettingField('payment_Altapay_' . $termKey, 'payment_Altapay_' . $termKey . '_title', $termName);

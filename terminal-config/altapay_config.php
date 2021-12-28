@@ -221,7 +221,9 @@ try {
             $i++;
         }
     }
-
+    if($i > 0){
+        addSettingField($db, 'altapay_terminals_refreshed', 'altapay_terminals_refreshed', 1);
+    }
     // Add Access/Modify permissions to the admin user group
     $modelUserGroup->addPermission(1, 'access', 'altapay/templates/admin/controller/altapay.twig');
     $modelUserGroup->addPermission(1, 'modify', 'altapay/templates/admin/controller/altapay.twig');
