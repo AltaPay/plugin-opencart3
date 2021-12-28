@@ -21,14 +21,6 @@ Run the below command to create the zip file in the dist folder.
 * Update "cypress/fixtures/config.json"
 * Execute `./node_modules/.bin/cypress run` in the terminal to run all the tests
 
-## Loading and saving gateway configurations
-Follow these steps to load and save the terminal configurations from the gateway.
-* Move the file from `terminal-config/altapay_config.php` to the root directory of the OpenCart installation
-* Edit the file and replace `~gatewayusername~`,`~gatewaypass~`, and `~gatewayurl~` with the actual credentials.
-* Run the file with the below command
-
-    $ php altapay_config.php
-
 ## License
 
 Distributed under the MIT License. See [LICENSE](LICENSE) for more information.

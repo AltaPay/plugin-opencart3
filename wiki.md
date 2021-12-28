@@ -21,6 +21,8 @@ Installing this plug-in will enable the web shop to handle card transactions thr
 
 [Configuration](#configuration)
 
+[Synchronize payment methods](#synchronize-payment-methods)
+
 [Supported versions](#supported-versions)
 
 [Troubleshooting](#troubleshooting)
@@ -115,6 +117,15 @@ The standard configuration connects the plugin with the test gateway. Take the f
 
 > _Note: In the case of a new installation, remember to refresh the terminals (go to **‘Extensions’ > ‘Extensions’ > ‘Modules’ >** edit **‘AltaPay’** and click on **‘Refresh terminals’**)._
 ![opencart_altapay_refresh_terminals](https://github.com/AltaPay/plugin-opencart3/blob/main/docs/opencart_altapay_refresh_terminals.png)
+
+
+This will populate all the available terminals for the current API user.
+If you face any issue click on **Refresh connection** button, this will fetch the terminals again and populate the list.
+
+## Synchronize payment methods
+
+To synchronize the terminals with the gateway, click on the **Sync terminals** button. This will fetch the latest terminals from the gateway and will automatically configure based on the store country.
+
 
 # Supported versions
 
