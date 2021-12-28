@@ -32,7 +32,7 @@ class ControllerExtensionModuleAltapay extends Controller
 
         if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate() && isset($_POST['terminalsync'])) {
 
-            $terminals_refreshed_query = $this->db->query("SELECT setting_id FROM " . DB_PREFIX . "setting WHERE `key` LIKE 'altapay_terminals_refreshed'");
+            $terminals_refreshed_query = $this->db->query("SELECT `value` FROM " . DB_PREFIX . "setting WHERE `key` LIKE 'altapay_terminals_refreshed'");
 
             if ($terminals_refreshed_query->num_rows and $terminals_refreshed_query->row['value']) {
 
