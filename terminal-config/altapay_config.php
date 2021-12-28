@@ -260,7 +260,7 @@ echo 'Settings are imported successfully';
  */
 function addSettingField($db, $code, $key, $value)
 {
-    $query = $db->query("SELECT * FROM " . DB_PREFIX . "setting WHERE `key` = '" . $key . "'");
+    $query = $db->query("SELECT setting_id FROM " . DB_PREFIX . "setting WHERE `key` = '" . $key . "'");
 
     if ($query->num_rows) {
         $db->query("UPDATE " . DB_PREFIX . "setting SET `code` = '" . $code . "', `value` = '" . $value . "' WHERE `key` = '" . $key . "'");
@@ -277,7 +277,7 @@ function addSettingField($db, $code, $key, $value)
  */
 function addExtensionField($db, $type, $code)
 {
-    $query = $db->query("SELECT * FROM " . DB_PREFIX . "extension WHERE `code` = '" . $code . "'");
+    $query = $db->query("SELECT extension_id FROM " . DB_PREFIX . "extension WHERE `code` = '" . $code . "'");
     if ($query->num_rows == 0) {
         $db->query("INSERT INTO  " . DB_PREFIX . "extension  (`type`,`code`) VALUES('" . $type . "', '" . $code . "')");
     }

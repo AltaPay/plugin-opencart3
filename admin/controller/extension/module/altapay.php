@@ -32,16 +32,16 @@ class ControllerExtensionModuleAltapay extends Controller
 
         if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate() && isset($_POST['terminalsync'])) {
 
-            $query0 = $this->db->query("SELECT * FROM " . DB_PREFIX . "setting WHERE `key` LIKE 'altapay_terminals_refreshed'");
+            $terminals_refreshed_query = $this->db->query("SELECT setting_id FROM " . DB_PREFIX . "setting WHERE `key` LIKE 'altapay_terminals_refreshed'");
 
-            if ($query0->num_rows and $query0->row['value']) {
+            if ($terminals_refreshed_query->num_rows and $terminals_refreshed_query->row['value']) {
 
-                $query = $this->db->query("SELECT iso_code_2 FROM " . DB_PREFIX . "country WHERE `country_id` = " . $this->config->get('config_country_id'));
+                $store_country_query = $this->db->query("SELECT iso_code_2 FROM " . DB_PREFIX . "country WHERE `country_id` = " . $this->config->get('config_country_id'));
 
-                if ($query->num_rows) {
-                    $query1 = $this->db->query("SELECT * FROM " . DB_PREFIX . "setting WHERE `key` LIKE 'payment_Altapay_%'");
+                if ($store_country_query->num_rows) {
+                    $terminal_installed_query = $this->db->query("SELECT setting_id FROM " . DB_PREFIX . "setting WHERE `key` LIKE 'payment_Altapay_%' LIMIT 1");
 
-                    if ($query1->num_rows) {
+                    if ($terminal_installed_query->num_rows) {
                         $data['sync_terminals_error'] = $this->language->get('text_sync_already_configured_terminals_error');
                     } else {
                         try {
@@ -52,7 +52,7 @@ class ControllerExtensionModuleAltapay extends Controller
                             } else {
                                 $i = 1;
                                 foreach ($response->Terminals as $terminal) {
-                                    if ($terminal->Country == $query->row['iso_code_2']) {
+                                    if ($terminal->Country == $store_country_query->row['iso_code_2']) {
                                         $forbiddenChars = array("'", '"', '-');
 
                                         // Remove single and double quotes - avoid the placeholders replacement issue from templates
@@ -426,13 +426,15 @@ class ControllerExtensionModuleAltapay extends Controller
     }
 
     /**
-     * @param $code
-     * @param $key
-     * @param $value
+     * @param string $code
+     * @param string $key
+     * @param integer|string $value
+     *
+     * @return void
      */
     public function addSettingField($code, $key, $value)
     {
-        $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "setting WHERE `key` = '" . $key . "'");
+        $query = $this->db->query("SELECT setting_id FROM " . DB_PREFIX . "setting WHERE `key` = '" . $key . "'");
 
         if ($query->num_rows) {
             $this->db->query("UPDATE " . DB_PREFIX . "setting SET `code` = '" . $code . "', `value` = '" . $value . "' WHERE `key` = '" . $key . "'");
@@ -444,12 +446,14 @@ class ControllerExtensionModuleAltapay extends Controller
 
 
     /**
-     * @param $type
-     * @param $code
+     * @param string $type
+     * @param string $code
+     *
+     * @return void
      */
     public function addExtensionField($type, $code)
     {
-        $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "extension WHERE `code` = '" . $code . "'");
+        $query = $this->db->query("SELECT extension_id FROM " . DB_PREFIX . "extension WHERE `code` = '" . $code . "'");
         if ($query->num_rows == 0) {
             $this->db->query("INSERT INTO  " . DB_PREFIX . "extension  (`type`,`code`) VALUES('" . $type . "', '" . $code . "')");
         }
