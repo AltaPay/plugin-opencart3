@@ -113,15 +113,15 @@ jobs:
         with:
           name: "config.json"
           json: '{"shopURL": "http://${{env.IP}}/opencart","adminURL": "http://${{env.IP}}/opencart/admin","adminUsername": "${{secrets.CMS_ADMIN_USER}}","adminPass": "${{secrets.CMS_ADMIN_PASS}}", "CC_TERMINAL_NAME": "${{secrets.CC_TERMINAL_NAME}}", "KLARNA_DKK_TERMINAL_NAME": "${{secrets.KLARNA_DKK_TERMINAL_NAME}}"}'
-          dir: tests/integration-tests/cypress/fixtures/
+          dir: "tests/integration-tests/cypress/fixtures/"
 
       - name: Install Cypress Dependencies 
         run: npm i
-        working-directory: tests/integration-tests
+        working-directory: "tests/integration-tests"
 
       - name: Run Cypress tests 
         run: ./node_modules/.bin/cypress run --config video=false
-        working-directory: tests/integration-tests
+        working-directory: "tests/integration-tests"
 
         # after the test run completes
         # store screenshots
