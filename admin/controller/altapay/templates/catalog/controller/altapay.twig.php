@@ -243,11 +243,11 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
             }
 
             $config = new Config();
-            $config->setCallbackOk($base_path . 'index.php?route=extension/payment/Altapay_EITTT/accept');
-            $config->setCallbackFail($base_path . 'index.php?route=extension/payment/Altapay_EITTT/fail');
-            $config->setCallbackOpen($base_path . 'index.php?route=extension/payment/Altapay_EITTT/open');
-            $config->setCallbackNotification($base_path . 'index.php?route=extension/payment/Altapay_EITTT/callback');
-            $config->setCallbackForm($base_path . 'index.php?route=extension/payment/Altapay_EITTT/paymentwindow');
+            $config->setCallbackOk($base_path . 'index.php?route=extension/payment/Altapay_{key}/accept');
+            $config->setCallbackFail($base_path . 'index.php?route=extension/payment/Altapay_{key}/fail');
+            $config->setCallbackOpen($base_path . 'index.php?route=extension/payment/Altapay_{key}/open');
+            $config->setCallbackNotification($base_path . 'index.php?route=extension/payment/Altapay_{key}/callback');
+            $config->setCallbackForm($base_path . 'index.php?route=extension/payment/Altapay_{key}/paymentwindow');
 
             $customerInfo = $this->setCustomer($order_info);
 
