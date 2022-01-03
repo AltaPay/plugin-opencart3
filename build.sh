@@ -28,5 +28,5 @@ else
     mkdir dist
 fi
 rm -rf altapay-libs
-php7.3 $(command -v composer) install --no-dev -o
+php7.3 $(command -v composer) install --no-dev -o --no-interaction
 zip -r dist/altapay-3x.ocmod.zip * -x "dist/"

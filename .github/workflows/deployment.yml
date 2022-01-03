@@ -126,12 +126,8 @@ jobs:
         # after the test run completes
         # store screenshots
         # NOTE: screenshots will be generated only if E2E test failed
-        # thus we store screenshots only on failures
-        # Alternative: create and commit an empty cypress/screenshots folder
-        # to always have something to upload
-      - uses: actions/upload-artifact@v1
-        if: failure()
+      - uses: actions/upload-artifact@v2
         with:
           name: cypress-screenshots
           path: ./tests/integration-tests/cypress/screenshots
-          
+          if-no-files-found: ignore
