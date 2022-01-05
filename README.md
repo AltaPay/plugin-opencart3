@@ -21,6 +21,10 @@ Run the below command to create the zip file in the dist folder.
 * Update "cypress/fixtures/config.json"
 * Execute `./node_modules/.bin/cypress run` in the terminal to run all the tests
 
+## Changelog
+
+See [Changelog](CHANGELOG.md) for all the release notes.
+
 ## License
 
 Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
