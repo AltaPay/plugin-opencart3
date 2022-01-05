@@ -29,6 +29,10 @@ Follow these steps to load and save the terminal configurations from the gateway
 
     $ php altapay_config.php
 
+## Changelog
+
+See [Changelog](CHANGELOG.md) for all the release notes.
+
 ## License
 
 Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
