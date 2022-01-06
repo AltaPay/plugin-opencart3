@@ -42,11 +42,11 @@ class ModelExtensionModuleAltapay extends Model {
 
 	public function updateOrderMeta($order_id, $capture = false, $refund = false, $void = false) {
 		if ($capture) {
-			$this->db->query("UPDATE " . DB_PREFIX . "altapay_orders SET modified='".date('Y-m-d H:i:s', time())."', capture_status='1' WHERE order_id='".$order_id."'");
+			$this->db->query("UPDATE " . DB_PREFIX . "altapay_orders SET modified='".$this->db->escape((string)date('Y-m-d H:i:s', time()))."', capture_status='1' WHERE order_id='".(int)$order_id."'");
 		} elseif ($refund) {
-			$this->db->query("UPDATE " . DB_PREFIX . "altapay_orders SET modified='".date('Y-m-d H:i:s', time())."', refund_status='1' WHERE order_id='".$order_id."'");
+			$this->db->query("UPDATE " . DB_PREFIX . "altapay_orders SET modified='".$this->db->escape((string)date('Y-m-d H:i:s', time()))."', refund_status='1' WHERE order_id='".(int)$order_id."'");
 		} elseif ($void) {
-			$this->db->query("UPDATE " . DB_PREFIX . "altapay_orders SET modified='".date('Y-m-d H:i:s', time())."', void_status='1' WHERE order_id='".$order_id."'");
+			$this->db->query("UPDATE " . DB_PREFIX . "altapay_orders SET modified='".$this->db->escape((string)date('Y-m-d H:i:s', time()))."', void_status='1' WHERE order_id='".(int)$order_id."'");
 		}
 	}
 	
