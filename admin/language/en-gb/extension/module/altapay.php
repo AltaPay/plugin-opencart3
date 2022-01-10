@@ -1,14 +1,20 @@
 <?php
 // Heading
-$_['heading_title'] = 'Altapay';
+$_['heading_title'] = 'AltaPay';
 
 //Text
 $_['text_module'] = 'Extensions';
-$_['text_success'] = 'Success: You have modified module Altapay!';
+$_['text_success'] = 'Success: You have modified module AltaPay!';
 $_['text_refresh_success'] = 'Success: Terminals have been refreshed!';
 $_['text_refresh_error'] = 'Error: Terminals could not be refreshed!';
-$_['text_altapay_login_error'] = 'Error: Could not login to Altapay!';
-$_['text_altapay_terminals_error'] = 'Error: could not save terminal files!';
+$_['text_AltaPay_login_error'] = 'Error: Could not connect to AltaPay!';
+$_['text_AltaPay_terminals_error'] = 'Error: could not save terminal files!';
+$_['text_sync_no_matching_terminals_error'] = 'Error: Could not find terminals matching your store country, please check the "Payment Methods" for terminal config.';
+$_['text_sync_already_configured_terminals_error'] = 'Error: Terminal(s) already set up, please configure them manually.';
+$_['text_sync_error'] = 'Error: Terminals could not be synced!';
+$_['text_sync_error_refresh_required'] = 'Error: Terminals are missing. Click "Refresh terminals" button to re-create terminal data.';
+$_['text_sync_success'] = 'Success: Terminals have been configured successfully!';
+
 $_['text_content_top'] = 'Content Top';
 $_['text_content_bottom'] = 'Content Bottom';
 $_['text_column_left'] = 'Column Left';
@@ -40,6 +46,7 @@ $_['entry_terminals'] = 'Terminals';
 $_['button_save_stay'] = 'Save';
 $_['button_save_close'] = 'Save & Close';
 $_['button_refresh_terminals'] = 'Refresh terminals';
+$_['button_sync_terminals'] = 'Sync terminals';
 
 //Error
-$_['error_permission'] = 'Warning: You do not have permission to modify module Altapay!';
+$_['error_permission'] = 'Warning: You do not have permission to modify module AltaPay!';

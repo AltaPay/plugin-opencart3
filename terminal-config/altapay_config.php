@@ -68,15 +68,11 @@ try {
     $response = $api->call();
     $i = 1;
 
-    foreach ($response->Terminals as $key => $terminal) {
+    foreach ($response->Terminals as $terminal) {
         if ($terminal->Country == 'DK') {
-            $forbiddenChars = array("'", '"', '-');
-            $termName = str_replace($forbiddenChars, "", $terminal->Title);
-            preg_match_all("#([A-Z]+)#", str_replace(' ', '', ucwords($termName)), $output);
-            $termKey = implode('', $output[1]);
-
             // Remove single and double quotes - avoid the placeholders replacement issue from templates
             // where single quotes are used for strings
+            $forbiddenChars = array("'", '"', '-');
             $termName = str_replace($forbiddenChars, "", $terminal->Title);
             preg_match_all("#([A-Z]+)#", str_replace(' ', '', ucwords($termName)), $output);
             $termKey = implode('', $output[1]);
@@ -94,7 +90,7 @@ try {
 
             // Check if file exists
             $dir = __DIR__;
-            $tmpdir = sys_get_temp_dir();
+
             // ADMIN templates
             $path = $dir . '/admin/controller/extension/payment/Altapay_' . $termKey . '.php';
 
@@ -225,7 +221,9 @@ try {
             $i++;
         }
     }
-
+    if($i > 1){
+        addSettingField($db, 'altapay_terminals_refreshed', 'altapay_terminals_refreshed', 1);
+    }
     // Add Access/Modify permissions to the admin user group
     $modelUserGroup->addPermission(1, 'access', 'altapay/templates/admin/controller/altapay.twig');
     $modelUserGroup->addPermission(1, 'modify', 'altapay/templates/admin/controller/altapay.twig');
@@ -262,7 +260,7 @@ echo 'Settings are imported successfully';
  */
 function addSettingField($db, $code, $key, $value)
 {
-    $query = $db->query("SELECT * FROM " . DB_PREFIX . "setting WHERE `key` = '" . $db->escape((string)$key) . "'");
+    $query = $db->query("SELECT setting_id FROM " . DB_PREFIX . "setting WHERE `key` = '" . $db->escape((string)$key) . "'");
 
     if ($query->num_rows) {
         $db->query("UPDATE " . DB_PREFIX . "setting SET `code` = '" . $db->escape((string)$code) . "', `value` = '" . $db->escape((string)$value) . "' WHERE `key` = '" . $db->escape((string)$key) . "'");
