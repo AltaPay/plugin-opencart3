@@ -113,25 +113,22 @@ jobs:
         with:
           name: "config.json"
           json: '{"shopURL": "http://${{env.IP}}/opencart","adminURL": "http://${{env.IP}}/opencart/admin","adminUsername": "${{secrets.CMS_ADMIN_USER}}","adminPass": "${{secrets.CMS_ADMIN_PASS}}", "CC_TERMINAL_NAME": "${{secrets.CC_TERMINAL_NAME}}", "KLARNA_DKK_TERMINAL_NAME": "${{secrets.KLARNA_DKK_TERMINAL_NAME}}"}'
-          dir: tests/integration-tests/cypress/fixtures/
+          dir: "tests/integration-tests/cypress/fixtures/"
 
       - name: Install Cypress Dependencies 
         run: npm i
-        working-directory: tests/integration-tests
+        working-directory: "tests/integration-tests"
 
       - name: Run Cypress tests 
         run: ./node_modules/.bin/cypress run --config video=false
-        working-directory: tests/integration-tests
+        working-directory: "tests/integration-tests"
 
         # after the test run completes
         # store screenshots
         # NOTE: screenshots will be generated only if E2E test failed
-        # thus we store screenshots only on failures
-        # Alternative: create and commit an empty cypress/screenshots folder
-        # to always have something to upload
-      - uses: actions/upload-artifact@v1
-        if: failure()
+      - uses: actions/upload-artifact@v2
+        if: failure() || true
         with:
           name: cypress-screenshots
-          path: ./tests/integration-tests/cypress/screenshots
-          
+          path: "./tests/integration-tests/cypress/screenshots"
+          if-no-files-found: ignore

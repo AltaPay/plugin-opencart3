@@ -12,7 +12,7 @@ Run the below command to create the zip file in the dist folder.
 
 ### Prerequisites: 
 
-* OpenCart 3.x should be installed with the default theme on publically accessible URL
+* OpenCart 3.x should be installed with the default theme on publicly accessible URL
 * Cypress should be installed
 
 ### Steps 
@@ -20,6 +20,10 @@ Run the below command to create the zip file in the dist folder.
 * Install dependencies `npm i`
 * Update "cypress/fixtures/config.json"
 * Execute `./node_modules/.bin/cypress run` in the terminal to run all the tests
+
+## Changelog
+
+See [Changelog](CHANGELOG.md) for all the release notes.
 
 ## Changelog
 

@@ -4,6 +4,6 @@
   "adminUsername":"admin_username",
   "adminPass":"admin_password",
   "CC_TERMINAL_NAME":"Your CC Terminal Name",
-  "KLARNA_DKK_TERMINAL_NAME":"Your Klarna Terminal Name"
+  "KLARNA_DKK_TERMINAL_NAME":"Your Klarna Terminal Name",
+  "iDEAL_EUR_TERMINAL": "Your iDEAL Terminal Name"
 }
-
