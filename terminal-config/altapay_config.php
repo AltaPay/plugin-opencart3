@@ -262,12 +262,12 @@ echo 'Settings are imported successfully';
  */
 function addSettingField($db, $code, $key, $value)
 {
-    $query = $db->query("SELECT * FROM " . DB_PREFIX . "setting WHERE `key` = '" . $key . "'");
+    $query = $db->query("SELECT * FROM " . DB_PREFIX . "setting WHERE `key` = '" . $db->escape((string)$key) . "'");
 
     if ($query->num_rows) {
-        $db->query("UPDATE " . DB_PREFIX . "setting SET `code` = '" . $code . "', `value` = '" . $value . "' WHERE `key` = '" . $key . "'");
+        $db->query("UPDATE " . DB_PREFIX . "setting SET `code` = '" . $db->escape((string)$code) . "', `value` = '" . $db->escape((string)$value) . "' WHERE `key` = '" . $db->escape((string)$key) . "'");
     } else {
-        $db->query("INSERT INTO  " . DB_PREFIX . "setting  (`store_id`,`code`,`key`, `value`,`serialized`) VALUES(0, '" . $code . "', '" . $key . "', '" . $value . "', 0)");
+        $db->query("INSERT INTO  " . DB_PREFIX . "setting  (`store_id`,`code`,`key`, `value`,`serialized`) VALUES(0, '" . $db->escape((string)$code) . "', '" . $db->escape((string)$key) . "', '" . $db->escape((string)$value) . "', 0)");
     }
 
 }
@@ -279,9 +279,9 @@ function addSettingField($db, $code, $key, $value)
  */
 function addExtensionField($db, $type, $code)
 {
-    $query = $db->query("SELECT * FROM " . DB_PREFIX . "extension WHERE `code` = '" . $code . "'");
+    $query = $db->query("SELECT * FROM " . DB_PREFIX . "extension WHERE `code` = '" . $db->escape((string)$code) . "'");
     if ($query->num_rows == 0) {
-        $db->query("INSERT INTO  " . DB_PREFIX . "extension  (`type`,`code`) VALUES('" . $type . "', '" . $code . "')");
+        $db->query("INSERT INTO  " . DB_PREFIX . "extension  (`type`,`code`) VALUES('" . $db->escape((string)$type) . "', '" . $db->escape((string)$code) . "')");
     }
 
 }
@@ -295,12 +295,12 @@ function addExtensionField($db, $type, $code)
  */
 function addCurrencyField($db, $title, $code, $symbol)
 {
-    $query = $db->query("SELECT `currency_id` FROM " . DB_PREFIX . "currency WHERE `code` = '" . $code . "'");
+    $query = $db->query("SELECT `currency_id` FROM " . DB_PREFIX . "currency WHERE `code` = '" . $db->escape((string)$code) . "'");
     if ($query->num_rows) {
-        $db->query("UPDATE " . DB_PREFIX . "currency  SET `title` = '" . $title . "', `symbol_left` = '" . $symbol . "', `date_modified` = NOW() WHERE `code` = '" . $code . "'");
+        $db->query("UPDATE " . DB_PREFIX . "currency  SET `title` = '" . $db->escape((string)$title) . "', `symbol_left` = '" . $db->escape((string)$symbol) . "', `date_modified` = NOW() WHERE `code` = '" . $db->escape((string)$code) . "'");
         return $query->row['currency_id'];
     } else {
-        $db->query("INSERT INTO " . DB_PREFIX . "currency (`title`, `code`, `symbol_left`, `symbol_right`, `decimal_place`, `value`, `status`, `date_modified`) VALUES ('" . $title . "', '" . $code . "', '" . $symbol . "', '', '2', '1.00000000', '1', NOW())");
+        $db->query("INSERT INTO " . DB_PREFIX . "currency (`title`, `code`, `symbol_left`, `symbol_right`, `decimal_place`, `value`, `status`, `date_modified`) VALUES ('" . $db->escape((string)$title) . "', '" . $db->escape((string)$code) . "', '" . $db->escape((string)$symbol) . "', '', '2', '1.00000000', '1', NOW())");
         return $db->getLastId();
     }
 }

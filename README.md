@@ -12,7 +12,7 @@ Run the below command to create the zip file in the dist folder.
 
 ### Prerequisites: 
 
-* OpenCart 3.x should be installed with the default theme on publically accessible URL
+* OpenCart 3.x should be installed with the default theme on publicly accessible URL
 * Cypress should be installed
 
 ### Steps 
@@ -28,6 +28,10 @@ Follow these steps to load and save the terminal configurations from the gateway
 * Run the file with the below command
 
     $ php altapay_config.php
+
+## Changelog
+
+See [Changelog](CHANGELOG.md) for all the release notes.
 
 ## License
 
