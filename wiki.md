@@ -67,11 +67,11 @@ The standard configuration connects the plugin with the test gateway. Take the f
 - In the AltaPay line, click on Edit.
 - Fill in the credentials, change the **Gateway status** to **Enabled** and click on 'Save'.
 
- ![opencart_altapay_enable](docs/opencart_altapay_enable.png)
+ ![opencart_altapay_enable](https://github.com/AltaPay/plugin-opencart3/blob/main/docs/opencart_altapay_enable.png)
 
 - Click on **Refresh Terminals**
 
- ![opencart_altapay_refresh_terminals](docs/opencart_altapay_refresh_terminals.png)
+ ![opencart_altapay_refresh_terminals](https://github.com/AltaPay/plugin-opencart3/blob/main/docs/opencart_altapay_refresh_terminals.png)
 
 
 ## Configure the terminals for the checkout page
@@ -116,7 +116,7 @@ The standard configuration connects the plugin with the test gateway. Take the f
 
 
 > _Note: In the case of a new installation, remember to refresh the terminals (go to **‘Extensions’ > ‘Extensions’ > ‘Modules’ >** edit **‘AltaPay’** and click on **‘Refresh terminals’**)._
-![opencart_altapay_refresh_terminals](docs/opencart_altapay_refresh_terminals.png)
+![opencart_altapay_refresh_terminals](https://github.com/AltaPay/plugin-opencart3/blob/main/docs/opencart_altapay_refresh_terminals.png)
 
 
 This will populate all the available terminals for the current API user.
@@ -126,7 +126,7 @@ If you face any issue click on **Refresh connection** button, this will fetch th
 
 To synchronize the terminals with the gateway, click on the **Sync terminals** button. This will fetch the latest terminals from the gateway and will automatically configure based on the store country.
 
-![synchronize_payment_methods](docs/synchronize_payment_methods.png)
+![synchronize_payment_methods](https://github.com/AltaPay/plugin-opencart3/blob/main/docs/synchronize_payment_methods.png)
 
 # Supported versions
 
