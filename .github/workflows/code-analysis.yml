@@ -8,25 +8,60 @@ on:
     branches: [ main ]
 
 jobs:
-  php-l:
+  php-stan:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-versions: ['5.6']
+        php-versions: ['7.4']
     steps:
-     - name: Install PHP 5.6
-       uses: shivammathur/setup-php@v2
-       with:
-         php-version: ${{ matrix.php-versions }}
-         extensions: intl #optional
-         ini-values: "post_max_size=256M" #optional
-       
-     - run: mkdir plugin-opencart3
-     - uses: actions/checkout@v2 
-       with: 
-         path: plugin-opencart3
-      
-     - name: Run php5.6 linter
-       run: |
-         find . -path ./vendor -prune -o -type f -name '*.php' ! -name '*twig.php' -print0 | xargs -0 -n1 -P$(nproc) php5.6 -l -n | (! grep -v 'No syntax errors detected')
-       working-directory: plugin-opencart3
+      - name: Install PHP 7.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: intl #optional
+          ini-values: "post_max_size=256M" #optional
+
+      - name: Download Opencart
+        run: |
+          curl -O https://github.com/opencart/opencart/releases/download/opencart-3.0.3.7.zip
+          unzip opencart-3.0.3.7.zip
+          mkdir opencart && cp -a opencart-3.0.3.7/upload/. opencart/
+          rm -rf opencart-3.0.3.7.zip opencart-3.0.3.7
+
+      - name: Download AltaPay plugin
+      - run: plugin-opencart3
+      - uses: actions/checkout@v2
+        with:
+          path: plugin-opencart3
+
+      - name: Install plugin dependencies & PHPStan
+        run: composer install --no-interaction
+        working-directory: plugin-opencart3
+
+      - name: Install AltaPay plugin
+        run: |
+          cp -r plugin-opencart3/admin/* opencart/admin/
+          cp -r plugin-opencart3/catalog/* opencart/catalog/
+          cp -r plugin-opencart3/altapay-libs/ opencart/
+          rm -rf plugin-opencart3
+
+      - name: Run PHPStan
+        run: altapay-libs/bin/phpstan analyze
+        working-directory: opencart
+
+      - name: Install PHP 5.6
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: intl #optional
+          ini-values: "post_max_size=256M" #optional
+
+      - run: mkdir plugin-opencart3
+      - uses: actions/checkout@v2
+        with:
+          path: plugin-opencart3
+
+      - name: Run php5.6 linter
+        run: |
+          find . -path ./vendor -prune -o -type f -name '*.php' ! -name '*twig.php' -print0 | xargs -0 -n1 -P$(nproc) php5.6 -l -n | (! grep -v 'No syntax errors detected')
+        working-directory: plugin-opencart3
