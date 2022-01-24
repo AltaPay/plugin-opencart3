@@ -29,7 +29,6 @@ jobs:
           rm -rf opencart-3.0.3.7.zip opencart-3.0.3.7
 
       - name: Download AltaPay plugin
-      - run: plugin-opencart3
       - uses: actions/checkout@v2
         with:
           path: plugin-opencart3
