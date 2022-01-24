@@ -1,0 +1,8 @@
+parameters:
+    paths:
+        - %currentWorkingDirectory%/
+    excludePaths:
+        - %currentWorkingDirectory%/*test*
+        - %currentWorkingDirectory%/*twig*
+        - %currentWorkingDirectory%/*cache*
+    level: 0
