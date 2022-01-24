@@ -25,8 +25,8 @@ jobs:
         run: |
           wget https://github.com/opencart/opencart/releases/download/3.0.3.7/opencart-3.0.3.7.zip
           unzip opencart-3.0.3.7.zip
-          mkdir opencart && cp -a opencart-3.0.3.7/upload/. opencart/
-          rm -rf opencart-3.0.3.7.zip opencart-3.0.3.7
+          mkdir opencart && cp -a upload/. opencart/
+          rm -rf opencart-3.0.3.7.zip
 
       - name: Download AltaPay plugin
         uses: actions/checkout@v2
