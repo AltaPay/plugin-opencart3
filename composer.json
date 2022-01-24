@@ -4,5 +4,13 @@
     },
     "config": {
         "vendor-dir": "altapay-libs"
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^1.4"
+    },
+    "archive": {
+        "exclude": [
+            "phpstan.neon.dist"
+        ]
     }
 }
