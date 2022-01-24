@@ -23,7 +23,7 @@ jobs:
 
       - name: Download Opencart
         run: |
-          curl -O https://github.com/opencart/opencart/releases/download/opencart-3.0.3.7.zip
+          curl -O https://github.com/opencart/opencart/releases/download/3.0.3.7/opencart-3.0.3.7.zip
           unzip opencart-3.0.3.7.zip
           mkdir opencart && cp -a opencart-3.0.3.7/upload/. opencart/
           rm -rf opencart-3.0.3.7.zip opencart-3.0.3.7
