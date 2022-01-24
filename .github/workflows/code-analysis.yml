@@ -42,6 +42,7 @@ jobs:
           cp -r plugin-opencart3/admin/* opencart/admin/
           cp -r plugin-opencart3/catalog/* opencart/catalog/
           cp -r plugin-opencart3/altapay-libs/ opencart/
+          cp plugin-opencart3/phpstan.neon.dist opencart/
           rm -rf plugin-opencart3
 
       - name: Run PHPStan
