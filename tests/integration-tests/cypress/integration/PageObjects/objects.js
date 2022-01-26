@@ -11,10 +11,15 @@ class Order
         })   
     }
     
-    addproduct(){
+    addproduct(discount = ''){
         cy.get(':nth-child(1) > .product-thumb > .image > a > .img-responsive').click()
         cy.get('#button-cart').click()
         cy.get('.alert').contains('shopping cart').click()
+        if(discount != ""){
+            cy.contains('Use Coupon Code').click()
+            cy.get('#input-coupon').type(discount)
+            cy.get('#button-coupon').click().wait(2000)
+        }
         cy.get('.pull-right > .btn').click()
         cy.get(':nth-child(4) > label > input').click()
         cy.get('#button-account').click()
@@ -28,7 +33,7 @@ class Order
         cy.get('#input-payment-country').select('Denmark')
         cy.get('#input-payment-zone').select('Fyn')
         cy.get('#input-payment-zone').select('Fyn')
-        cy.get('#button-guest').click().wait(2000)
+        cy.get('#button-guest').click().wait(3000)
         cy.get('body').then(($body) => {
             if ($body.text().includes('Flat Rate') ) {
                 cy.get('#button-shipping-method').click().wait(3000)
@@ -163,6 +168,37 @@ class Order
         cy.get('.nav > :nth-child(3) > a').click()
         cy.get('#quantity').click().clear().type('1')
         cy.get('#btn-capture').click()
+    }
+
+    create_discounts(){
+        
+            cy.get('[href="#collapse6"]').click()
+            cy.contains('Coupons').click({force: true})
+            if(cy.get('tbody > tr ').contains('Enabled')){
+                cy.get('thead > tr > .text-center > input').click()
+            cy.get('.btn-danger').click().wait(1000)
+            }
+            let discount_types = {'fixed_discount':'fixed', 'percentage_discount': 'percentage'}
+
+        Object.entries(discount_types).forEach(([key, value]) => {
+            cy.get('[href="#collapse6"]').click()
+            cy.contains('Coupons').click({force: true})
+            cy.get('.pull-right > .btn-primary > .fa').click()
+                if(key =='fixed_discount'){
+                    cy.get('#input-name').type('Fixed Discount')
+                    cy.get('#input-code').type(value)
+                    cy.get('#input-type').select('Fixed Amount')
+                }
+                else{
+                    cy.get('#input-name').type('Percentage Discount')
+                    cy.get('#input-code').type(value)
+                    cy.get('#input-type').select('Percentage')
+                }
+            cy.get('#input-discount').type('10')
+            cy.get('#input-uses-total').clear().type('9999')
+            cy.get('#input-uses-customer').clear().type('9999')
+            cy.get('.btn-primary').click()
+        })
     }
 }
 
