@@ -104,7 +104,7 @@ jobs:
       - uses: actions/checkout@v1
         with:
           repository: AltaPay/plugin-opencart3
-          ref: 'origin/main'
+          ref: '${{env.TEST_BRANCH_NAME}}'
           path: plugin-opencart3
 
       - name: Create Cypress fixture config json
