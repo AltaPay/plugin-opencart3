@@ -76,7 +76,7 @@ jobs:
           options: |
             -u ubuntu
             -i inventory
-            --extra-vars "variable_host=opencart-support branch_name=main gatewayURL=${{ secrets.GATEWAYURL }} gatewayUser=${{ secrets.GATEWAYUSER }} gatewayPass=${{ secrets.GATEWAYPASS }}"   
+            --extra-vars "variable_host=opencart-support branch_name=main gatewayURL=${{ secrets.GATEWAYURL }} gatewayUser=${{ secrets.GATEWAYUSER }} gatewayPass=${{ secrets.GATEWAYPASS }} opencart_admin_user=${{ secrets.CMS_ADMIN_USER}} opencart_admin_password=${{ secrets.CMS_ADMIN_PASS_SUPPORT}} opencart_admin_email=${{ secrets.CMS_ADMIN_EMAIL}}"   
 
       # Export URL
       - name: Export URL
