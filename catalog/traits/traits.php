@@ -10,10 +10,10 @@ trait traitTransactionInfo
     {
         $otherinfo       = 'storeName-' . $this->config->get('config_name');
         $transactionInfo = array(
-            'ecomPlatform'         => 'Opencart',
+            'ecomPlatform'         => 'OpenCart',
             'ecomVersion'          => VERSION,
-            'altapayPluginName'    => 'Altapay',
-            'altapayPluginVersion' => '3.4',
+            'altapayPluginName'    => 'AltaPay',
+            'altapayPluginVersion' => '3.5',
             'otherInfo'            => $otherinfo,
         );
 

@@ -6,8 +6,7 @@ require_once dirname(__file__, 4) . './../altapay-libs/autoload.php';
 use Altapay\Api\Payments\CaptureReservation;
 use Altapay\Api\Payments\RefundCapturedReservation;
 use Altapay\Api\Payments\ReleaseReservation;
-use Altapay\Response\ReleaseReservationResponse;
-use Altapay\Exceptions\ResponseMessageException;
+    use Altapay\Exceptions\ResponseMessageException;
 use Altapay\Exceptions\ResponseHeaderException;
 use Altapay\Api\Others\Payments;
 use Altapay\Request\OrderLine;
@@ -217,6 +216,7 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
             $captured = 0;
             $refunded = 0;
             $charge   = 0;
+            $reconciliation_identifiers = [];
 
             $api = new Payments($this->getAuth());
             $api->setTransaction($order['transaction_id']);
@@ -231,6 +231,11 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
                     $charge   = $reserved - $captured - $refunded;
                     if ($charge <= 0) {
                         $charge = 0;
+                    }
+                    if (isset($pay->ReconciliationIdentifiers) and !empty($pay->ReconciliationIdentifiers)) {
+                        foreach ($pay->ReconciliationIdentifiers as $reconciliation_identifier){
+                            $reconciliation_identifiers[$reconciliation_identifier->Id] = $reconciliation_identifier->Type;
+                        }
                     }
                 }
             }
@@ -251,6 +256,8 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
             $data['text_confirm_capture']   = $this->language->get('text_confirm_capture');
             $data['text_confirm_refund']    = $this->language->get('text_confirm_refund');
             $data['text_confirm_release']   = $this->language->get('text_confirm_release');
+            $data['text_reconciliation_identifier'] = $this->language->get('text_reconciliation_identifier');
+            $data['text_transaction_types'] = $this->language->get('text_transaction_types');
 
             $data['text_released'] = $this->language->get('text_released');
             $data['btn_release']   = $this->language->get('btn_release');
@@ -258,6 +265,7 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
             $data['btn_capture']   = $this->language->get('btn_capture');
             $data['user_token']    = $this->request->get['user_token'];
             $data['order_id']      = $this->request->get['order_id'];
+            $data['reconciliation_identifiers']      = $reconciliation_identifiers;
 
             return $this->load->view('extension/payment/Altapay_{key}_order', $data);
         }

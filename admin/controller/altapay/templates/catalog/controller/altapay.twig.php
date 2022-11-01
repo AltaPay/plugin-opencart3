@@ -297,7 +297,7 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
     }
 
     /**
-     * @param WC_Order $order
+     * @param array $order_info
      *
      * @return Customer
      * @throws Exception

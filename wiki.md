@@ -23,6 +23,8 @@ Installing this plug-in will enable the web shop to handle card transactions thr
 
 [Synchronize payment methods](#synchronize-payment-methods)
 
+[Reconcile Orders](#reconcile-orders)
+
 [Supported versions](#supported-versions)
 
 [Troubleshooting](#troubleshooting)
@@ -127,6 +129,30 @@ If you face any issue click on **Refresh connection** button, this will fetch th
 To synchronize the terminals with the gateway, click on the **Sync terminals** button. This will fetch the latest terminals from the gateway and will automatically configure based on the store country.
 
 ![synchronize_payment_methods](https://github.com/AltaPay/plugin-opencart3/blob/main/docs/synchronize_payment_methods.png)
+
+
+
+# Reconcile Orders
+In order to reconcile payments please follow the steps below:
+
+1. Navigate to the OpenCart admin **Dashboard** page.
+2. Select **Sales** > **Orders** from the left menu.
+3. Select the order you want to view.
+4. Select the AltaPay terminal tabs from **Order History** section.
+5. Copy the **Reconciliation Identifier** from the **Payment Information** section.
+
+![opencart_order_view](docs/opencart_order_view.jpg)
+
+6. Navigate to AltaPay Gateway dashboard.
+7. Click on **FUNDING FILES** under **FINANCES** menu.
+8. Download the CSV file.
+9. Or you can find the payment in the transaction list, open the reconciliation file from there and download a csv file.
+10. Open the downloaded CSV file and match the **Reconciliation Identifier** with OpenCart's **Reconciliation Identifier**.
+
+**Sample AltaPay Gateway CSV:**
+
+![funding_list_csv](docs/funding_list_csv.png)
+
 
 # Supported versions
 

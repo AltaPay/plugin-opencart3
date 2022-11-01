@@ -66,6 +66,20 @@
   </tr>
 </table>
 
+{% if reconciliation_identifiers|length > 0 %}
+    <table class="table table-striped table-bordered">
+        <tr>
+            <td><strong>{{ text_reconciliation_identifiers }}:</strong></td>
+            <td><strong>{{ text_transaction_types }}</strong></td>
+        </tr>
+        {% for reconciliation_identifier,transaction_type in reconciliation_identifiers %}
+            <tr>
+                <td>{{ reconciliation_identifier }}</td>
+                <td>{{ transaction_type }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endif %}
 <script type="text/javascript">
 
 var orderLines = [];
