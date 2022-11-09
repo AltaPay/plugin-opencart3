@@ -6,7 +6,7 @@ require_once dirname(__file__, 4) . './../altapay-libs/autoload.php';
 use Altapay\Api\Payments\CaptureReservation;
 use Altapay\Api\Payments\RefundCapturedReservation;
 use Altapay\Api\Payments\ReleaseReservation;
-    use Altapay\Exceptions\ResponseMessageException;
+use Altapay\Exceptions\ResponseMessageException;
 use Altapay\Exceptions\ResponseHeaderException;
 use Altapay\Api\Others\Payments;
 use Altapay\Request\OrderLine;
