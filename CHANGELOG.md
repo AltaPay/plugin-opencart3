@@ -1,3 +1,6 @@
+## [3.5]
+- Add support for payment reconciliation.
+
 ## [3.4]
 - Fix: 404 error on checkout page due to issue in terminal callback URL.
 
