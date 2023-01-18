@@ -217,11 +217,6 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
             $refunded = 0;
             $charge   = 0;
             $reconciliation_identifiers = $this->model_extension_module_altapay->getOrderReconciliationIdentifiers($this->request->get['order_id']);
-            if(!empty($reconciliation_identifiers)){
-                foreach ($reconciliation_identifiers as $reconciliation_identifier){
-                    $reconciliation_identifiers[$reconciliation_identifier['reconciliation_identifier']] = $reconciliation_identifier['transaction_type'];
-                }
-            }
 
             $api = new Payments($this->getAuth());
             $api->setTransaction($order['transaction_id']);
