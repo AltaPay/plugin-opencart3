@@ -67,14 +67,14 @@ class ModelExtensionModuleAltapay extends Model {
     /**
      * @param int $order_id
      *
-     * @return
+     * @return array
      */
    public function getOrderReconciliationIdentifiers($order_id)
     {
         $query = $this->db->query('SELECT reconciliation_identifier, transaction_type FROM `' . DB_PREFIX . 'altapay_order_reconciliation` WHERE order_id =' . (int) $order_id);
 
         if ($query->num_rows) {
-            return $query->row;
+            return $query->rows;
         } else {
             return [];
         }
