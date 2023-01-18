@@ -216,7 +216,12 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
             $captured = 0;
             $refunded = 0;
             $charge   = 0;
-            $reconciliation_identifiers = [];
+            $reconciliation_identifiers = $this->model_extension_module_altapay->getOrderReconciliationIdentifiers($this->request->get['order_id']);
+            if(!empty($reconciliation_identifiers)){
+                foreach ($reconciliation_identifiers as $reconciliation_identifier){
+                    $reconciliation_identifiers[$reconciliation_identifier->Id] = $reconciliation_identifier->Type;
+                }
+            }
 
             $api = new Payments($this->getAuth());
             $api->setTransaction($order['transaction_id']);
@@ -231,11 +236,6 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
                     $charge   = $reserved - $captured - $refunded;
                     if ($charge <= 0) {
                         $charge = 0;
-                    }
-                    if (isset($pay->ReconciliationIdentifiers) and !empty($pay->ReconciliationIdentifiers)) {
-                        foreach ($pay->ReconciliationIdentifiers as $reconciliation_identifier){
-                            $reconciliation_identifiers[$reconciliation_identifier->Id] = $reconciliation_identifier->Type;
-                        }
                     }
                 }
             }
@@ -299,10 +299,12 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
             if ($txnID) {
                 if ($this->altapayApiLogin()) {
                     try {
+                        $reconciliation_identifier = sha1($order_id . time() . $txnID);
                         $api = new CaptureReservation($this->getAuth());
                         $api->setAmount(round($amount, 2));
                         $api->setOrderLines($orderLines);
                         $api->setTransaction($txnID);
+                        $api->setReconciliationIdentifier($reconciliation_identifier);
                         $response = $api->call();
                     } catch (InvalidArgumentException $e) {
                         $this->api_error = $e->getMessage();
@@ -350,6 +352,8 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
 
                             // Update order meta
                             $this->model_extension_module_altapay->updateOrderMeta($order_id, 1);
+                            // Add order reconciliation identifier
+                            $this->model_extension_module_altapay->saveOrderReconciliationIdentifier($order_id, $reconciliation_identifier);
                         }
                     }
                 } else {
@@ -403,10 +407,12 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
             if ($txnID) {
                 if ($this->altapayApiLogin()) {
                     try {
+                        $reconciliation_identifier = sha1($order_id. time() . $txnID);
                         $api = new RefundCapturedReservation($this->getAuth());
                         $api->setAmount(round($amount, 2));
                         $api->setOrderLines($orderLines);
                         $api->setTransaction($txnID);
+                        $api->setReconciliationIdentifier($reconciliation_identifier);
                         $response = $api->call();
                     } catch (ResponseHeaderException $e) {
                         $this->api_error = $e->getMessage();
@@ -444,6 +450,8 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
                             );
                             // Update order with status captured
                             $this->model_extension_module_altapay->updateOrderMeta($order_id, false, false, 1);
+                            // Add order reconciliation identifier
+                            $this->model_extension_module_altapay->saveOrderReconciliationIdentifier($order_id, $reconciliation_identifier, 'refunded');
                         }
                         // Set order to cancelled TODO
                     } else {

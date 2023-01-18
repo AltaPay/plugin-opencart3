@@ -16,12 +16,22 @@ class ModelExtensionModuleAltapay extends Model {
 			  `void_status` INT(1) DEFAULT NULL,
 			  `refund_status` INT(1) DEFAULT NULL,
 			  PRIMARY KEY (`altapay_order_id`)
-			) ENGINE=MyISAM DEFAULT COLLATE=utf8_general_ci;");			
+			) ENGINE=MyISAM DEFAULT COLLATE=utf8_general_ci;");
+
+        $this->db->query('CREATE TABLE IF NOT EXISTS `' . DB_PREFIX . 'altapay_order_reconciliation` (
+            `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+            `order_id` int(11) unsigned NOT NULL,
+            `reconciliation_identifier` varchar(255) NOT NULL,
+            `transaction_type` varchar(255) NOT NULL,            
+            PRIMARY KEY (`id`)
+        ) ENGINE=MyISAM DEFAULT COLLATE=utf8_general_ci;');
 	}
 	
 	public function uninstallDB() {
 		$this->db->query("DROP TABLE IF EXISTS `" . DB_PREFIX . "altapay_orders`;");
-		
+
+		$this->db->query("DROP TABLE IF EXISTS `" . DB_PREFIX . "altapay_order_reconciliation`;");
+
 		// Remove all payment methods TODO
 	}
 
@@ -53,5 +63,21 @@ class ModelExtensionModuleAltapay extends Model {
             $this->db->query("UPDATE " . DB_PREFIX . "altapay_orders SET modified='".$this->db->escape((string)date('Y-m-d H:i:s', time()))."', $status_query WHERE order_id='".(int)$order_id."'");
         }
 	}
-	
+
+    /**
+     * @param int $order_id
+     *
+     * @return
+     */
+   public function getOrderReconciliationIdentifiers($order_id)
+    {
+        $query = $this->db->query('SELECT reconciliation_identifier, transaction_type FROM `' . DB_PREFIX . 'altapay_order_reconciliation` WHERE order_id =' . (int) $order_id);
+
+        if ($query->num_rows) {
+            return $query->row;
+        } else {
+            return [];
+        }
+    }
+
 }

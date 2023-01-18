@@ -3,6 +3,7 @@
 require_once dirname(__file__, 4) . '/traits/traits.php';
 require_once dirname(__file__, 4) . './../altapay-libs/autoload.php';
 
+use Altapay\Api\Ecommerce\Callback;
 use Altapay\Api\Ecommerce\PaymentRequest;
 use Altapay\Exceptions\ClientException;
 use Altapay\Exceptions\ResponseHeaderException;
@@ -263,7 +264,8 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
                     ->setType($payment_type)
                     ->setConfig($config)
                     ->setCustomerInfo($customerInfo)
-                    ->setOrderLines($lineData);
+                    ->setOrderLines($lineData)
+                    ->setSaleReconciliationIdentifier(sha1($order_info['order_id'] . time() . mt_rand()));
 
             if ($request) {
                 try {
@@ -407,6 +409,16 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
             // Add order to transaction table
             $this->model_extension_module_altapay->addOrder($postdata);
 
+            // Add order reconciliation identifier
+            $callback = new Callback($postdata);
+            $response = $callback->call();
+            if ($response && is_array($response->Transactions) && !empty($response->Transactions[0]->ReconciliationIdentifiers)) {
+                $reconciliation_identifier = $response->Transactions[0]->ReconciliationIdentifiers[0]->Id;
+                $reconciliation_type = $response->Transactions[0]->ReconciliationIdentifiers[0]->Type;
+
+                $this->model_extension_module_altapay->saveOrderReconciliationIdentifier($order_id, $reconciliation_identifier, $reconciliation_type);
+            }
+
             // Redirect to order success
             $this->response->redirect($this->url->link('checkout/success', 'user_token=' . $this->session->data['user_token'], true));
         }
@@ -440,6 +452,16 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
 
         $status         = $postdata['status'];
         $payment_status = $postdata['payment_status'];
+
+        // Add order reconciliation identifier
+        $callback = new Callback($postdata);
+        $response = $callback->call();
+        if ($response && is_array($response->Transactions) && !empty($response->Transactions[0]->ReconciliationIdentifiers)) {
+            $reconciliation_identifier = $response->Transactions[0]->ReconciliationIdentifiers[0]->Id;
+            $reconciliation_type = $response->Transactions[0]->ReconciliationIdentifiers[0]->Type;
+
+            $this->model_extension_module_altapay->saveOrderReconciliationIdentifier($order_id, $reconciliation_identifier, $reconciliation_type);
+        }
 
         // Add meta data to the order
         if ($status === 'open') {
@@ -705,6 +727,16 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
 
             // Add order to transaction table
             $this->model_extnesion_module_altapay->addOrder($postdata);
+
+            // Add order reconciliation identifier
+            $callback = new Callback($postdata);
+            $response = $callback->call();
+            if ($response && is_array($response->Transactions) && !empty($response->Transactions[0]->ReconciliationIdentifiers)) {
+                $reconciliation_identifier = $response->Transactions[0]->ReconciliationIdentifiers[0]->Id;
+                $reconciliation_type = $response->Transactions[0]->ReconciliationIdentifiers[0]->Type;
+
+                $this->model_extension_module_altapay->saveOrderReconciliationIdentifier($order_id, $reconciliation_identifier, $reconciliation_type);
+            }
 
             // Redirect to order success
             $this->response->redirect($this->url->link('checkout/success', 'token=' . $this->session->data['token'], true));
