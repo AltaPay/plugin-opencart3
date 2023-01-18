@@ -219,7 +219,7 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
             $reconciliation_identifiers = $this->model_extension_module_altapay->getOrderReconciliationIdentifiers($this->request->get['order_id']);
             if(!empty($reconciliation_identifiers)){
                 foreach ($reconciliation_identifiers as $reconciliation_identifier){
-                    $reconciliation_identifiers[$reconciliation_identifier->Id] = $reconciliation_identifier->Type;
+                    $reconciliation_identifiers[$reconciliation_identifier['reconciliation_identifier']] = $reconciliation_identifier['transaction_type'];
                 }
             }
 
