@@ -12,7 +12,7 @@ class ModelExtensionModuleAltapay extends Model {
      *
      * @return void
      */
-    function saveOrderReconciliationIdentifier($order_id, $reconciliation_identifier, $type = 'captured') {
+    public function saveOrderReconciliationIdentifier($order_id, $reconciliation_identifier, $type = 'captured') {
         $query = $this->db->query(
             'SELECT id FROM `' . DB_PREFIX . 'altapay_order_reconciliation` WHERE order_id =' . (int) $order_id .
             " AND reconciliation_identifier ='" . $this->db->escape((string) $reconciliation_identifier) .
