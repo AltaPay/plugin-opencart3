@@ -8,14 +8,14 @@
     'use strict';
     $(function(){
         var token = getURLVar('user_token');
-        var filter_btn = $('#button-filter');
+        var pagination_row = $('#form-order + div');
         var form = $('#filter-order');
-        var export_btn = $(' <button class="btn btn-default"><i class="fa fa-download"></i> Export Reconciliation Data</button> ');
+        var export_btn = $(' <button class="btn btn-primary"><i class="fa fa-download"></i> Export Reconciliation Data</button> ');
         export_btn.on('click', function(){
             document.location = getExportUrl(form,token);
             return false;
         })
-        filter_btn.after(export_btn);
+        pagination_row.children(":first").append(export_btn);
 
     });
 
