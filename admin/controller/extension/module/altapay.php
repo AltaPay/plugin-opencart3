@@ -471,7 +471,7 @@ class ControllerExtensionModuleAltapay extends Controller
         $this->response->addHeader('Cache-Control: max-age=0');
         $this->response->addheader('Content-Description: File Transfer');
         $this->response->addheader('Content-Type: application/vnd.ms-excel');
-        $this->response->addheader('Content-Disposition: attachment; filename='. date('Y-m-d_H-i-s', time()) . '_orders.csv');
+        $this->response->addheader('Content-Disposition: attachment; filename=reconciliation_data_'. date('Y-m-d_H-i-s', time()) . '.csv');
         $this->response->addheader('Content-Transfer-Encoding: binary');
         $data = $this->applyExportOrderFilters();
 
@@ -553,19 +553,19 @@ class ControllerExtensionModuleAltapay extends Controller
             'limit'                  => $this->config->get('config_limit_admin')
         );
         $order_total = $this->model_sale_order->getTotalOrders($filter_data);
-        $render = [];
+        $return = [];
         do{
             $results = $this->model_sale_order->getOrders($filter_data);
             foreach($results as $result) {
-                $row = $this->db->query("SELECT currency_code, transaction_id, amount, created_at FROM `" . DB_PREFIX . "altapay_orders` WHERE `order_id` = '" . (int)$result['order_id'] . "' LIMIT 1");
+                $row = $this->db->query("SELECT currency_code, transaction_id, amount, created FROM `" . DB_PREFIX . "altapay_orders` WHERE `order_id` = '" . (int)$result['order_id'] . "' LIMIT 1")->row;
+                $item = [];
                 if ($row) {
-                    $item = [];
-                    $item['Order ID'] = $row['order_id'];
-                    $item['Date Created'] = date($this->language->get('date_format_short'), strtotime($row['created_at']));
+                    $item['Order ID'] = $result['order_id'];
+                    $item['Date Created'] = date($this->language->get('date_format_short'), strtotime($row['created']));
                     $item['Order Total'] = $row['amount'];
                     $item['Currency'] = $row['currency_code'];
                     $item['Transaction ID'] = $row['transaction_id'];
-                    $item['Order Status'] = $row['order_status'];
+                    $item['Order Status'] = $result['order_status'];
 
                     $reconciliation_identifiers_arr = $this->model_extension_module_altapay->getOrderReconciliationIdentifiers($result['order_id']);
                     if (!empty($reconciliation_identifiers_arr)) {
@@ -580,8 +580,9 @@ class ControllerExtensionModuleAltapay extends Controller
                             }
                             $reconciliation_identifiers['Reconciliation Identifier'] = $reconciliation_identifier['reconciliation_identifier'];
                             $reconciliation_identifiers['Type'] = $reconciliation_identifier['transaction_type'];
+                            $return[] = $reconciliation_identifiers;
                         }
-                        $render[] = $reconciliation_identifiers;
+
                     }
                 }
             }
@@ -593,7 +594,7 @@ class ControllerExtensionModuleAltapay extends Controller
 
         } while(true);
 
-        return $render;
+        return $return;
 
     }
 
