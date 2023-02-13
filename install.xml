@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+    <name>Export Reconciliation Data</name>
+    <code>export_reconciliation_data</code>
+    <version>1.0</version>
+    <author>AltaPay</author>
+    <link>https://github.com/AltaPay/plugin-opencart3</link>
+    <file path="admin/controller/sale/order.php">
+        <operation>
+            <search>
+                <![CDATA[protected function getList() {]]>
+            </search>
+            <add  position="after">
+                <![CDATA[$this->document->addScript('view/javascript/extension/export_reconciliation_data.js');]]>
+            </add>
+        </operation>
+    </file>
+</modification>

@@ -459,4 +459,169 @@ class ControllerExtensionModuleAltapay extends Controller
         }
 
     }
+
+    /**
+     * @return void
+     */
+    public function exportReconciliationData(){
+        $this->load->model('sale/order');
+        $this->load->model('extension/module/altapay');
+        $this->response->addheader('Pragma: public');
+        $this->response->addheader('Expires: 0');
+        $this->response->addHeader('Cache-Control: max-age=0');
+        $this->response->addheader('Content-Description: File Transfer');
+        $this->response->addheader('Content-Type: application/vnd.ms-excel');
+        $this->response->addheader('Content-Disposition: attachment; filename=reconciliation_data_'. date('Y-m-d_H-i-s', time()) . '.csv');
+        $this->response->addheader('Content-Transfer-Encoding: binary');
+        $data = $this->applyExportOrderFilters();
+
+        $this->response->setOutput($this->arrayToCsv($data));
+
+    }
+
+    /**
+     * @return array
+     */
+    private function applyExportOrderFilters(){
+
+        if (isset($this->request->get['filter_order_id'])) {
+            $filter_order_id = $this->request->get['filter_order_id'];
+        } else {
+            $filter_order_id = '';
+        }
+
+        if (isset($this->request->get['filter_customer'])) {
+            $filter_customer = $this->request->get['filter_customer'];
+        } else {
+            $filter_customer = '';
+        }
+
+        if (isset($this->request->get['filter_order_status'])) {
+            $filter_order_status = $this->request->get['filter_order_status'];
+        } else {
+            $filter_order_status = '';
+        }
+
+        if (isset($this->request->get['filter_order_status_id'])) {
+            $filter_order_status_id = $this->request->get['filter_order_status_id'];
+        } else {
+            $filter_order_status_id = '';
+        }
+
+        if (isset($this->request->get['filter_total'])) {
+            $filter_total = $this->request->get['filter_total'];
+        } else {
+            $filter_total = '';
+        }
+
+        if (isset($this->request->get['filter_date_added'])) {
+            $filter_date_added = $this->request->get['filter_date_added'];
+        } else {
+            $filter_date_added = '';
+        }
+
+        if (isset($this->request->get['filter_date_modified'])) {
+            $filter_date_modified = $this->request->get['filter_date_modified'];
+        } else {
+            $filter_date_modified = '';
+        }
+
+        if (isset($this->request->get['sort'])) {
+            $sort = $this->request->get['sort'];
+        } else {
+            $sort = 'o.order_id';
+        }
+
+        if (isset($this->request->get['order'])) {
+            $order = $this->request->get['order'];
+        } else {
+            $order = 'DESC';
+        }
+
+        $page = 1;
+        $filter_data = array(
+            'filter_order_id'        => $filter_order_id,
+            'filter_customer'	     => $filter_customer,
+            'filter_order_status'    => $filter_order_status,
+            'filter_order_status_id' => $filter_order_status_id,
+            'filter_total'           => $filter_total,
+            'filter_date_added'      => $filter_date_added,
+            'filter_date_modified'   => $filter_date_modified,
+            'sort'                   => $sort,
+            'order'                  => $order,
+            'start'                  => ($page - 1) * $this->config->get('config_limit_admin'),
+            'limit'                  => $this->config->get('config_limit_admin')
+        );
+        $order_total = $this->model_sale_order->getTotalOrders($filter_data);
+        $return = [];
+        do{
+            $results = $this->model_sale_order->getOrders($filter_data);
+            foreach($results as $result) {
+                $row = $this->db->query("SELECT transaction_id FROM `" . DB_PREFIX . "altapay_orders` WHERE `order_id` = '" . (int)$result['order_id'] . "' LIMIT 1")->row;
+                $item = [];
+                if ($row) {
+                    $item['Order ID'] = $result['order_id'];
+                    $item['Date Created'] = date($this->language->get('date_format_short'), strtotime($row['created']));
+                    $item['Order Total'] = $result['total'];
+                    $item['Currency'] = $result['currency_code'];
+                    $item['Transaction ID'] = $row['transaction_id'];
+                    $item['Order Status'] = $result['order_status'];
+
+                    $reconciliation_identifiers_arr = $this->model_extension_module_altapay->getOrderReconciliationIdentifiers($result['order_id']);
+                    if (!empty($reconciliation_identifiers_arr)) {
+                        $reconciliation_identifiers = [];
+                        foreach ($reconciliation_identifiers_arr as $k => $reconciliation_identifier) {
+                            foreach($item as $key => $value){
+                                if($k == 0){
+                                    $reconciliation_identifiers[$key]= $value;
+                                }else{
+                                    $reconciliation_identifiers[$key]= '';
+                                }
+                            }
+                            $reconciliation_identifiers['Reconciliation Identifier'] = $reconciliation_identifier['reconciliation_identifier'];
+                            $reconciliation_identifiers['Type'] = $reconciliation_identifier['transaction_type'];
+                            $return[] = $reconciliation_identifiers;
+                        }
+
+                    }
+                }
+            }
+            $page++;
+            $start = ($page-1) * $this->config->get('config_limit_admin');
+            if($start >= $order_total){
+                break;
+            }
+
+        } while(true);
+
+        return $return;
+
+    }
+
+    /**
+     * @param array $rows
+     * @return false|string
+     */
+    private function arrayToCsv($rows) {
+        $headers = array();
+        $fp = tmpfile();
+
+        if (isset($rows[0])) {
+            $headers = array_keys($rows[0]);
+        }
+
+        fputcsv($fp, $headers);
+
+        foreach ($rows as $row) {
+            $values = array_values($row);
+            @fputcsv($fp, $values);
+        }
+        $length = ftell($fp);
+        rewind($fp);
+        $output = fread($fp, $length + 1);
+        fclose($fp);
+
+        return $output;
+    }
+
 }

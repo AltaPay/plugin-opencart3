@@ -10,21 +10,18 @@ Run the below command to create the zip file in the dist folder.
 
 ## How to run cypress tests
 
-### Prerequisites: 
+As a prerequisite install OpenCart 3.x with the default theme and follow below steps:
 
-* OpenCart 3.x should be installed with the default theme on publicly accessible URL
-* Cypress should be installed
+* Navigate to `tests/integration-tests`
+* Install cypress by executing 
 
-### Steps 
+        npm i
+        
+* Update `cypress/fixtures/config.json`
+* Run cypress
 
-* Install dependencies `npm i`
-* Update "cypress/fixtures/config.json"
-* Execute `./node_modules/.bin/cypress run` in the terminal to run all the tests
-
-## Changelog
-
-See [Changelog](CHANGELOG.md) for all the release notes.
-
+        ./node_modules/.bin/cypress open
+   
 ## Changelog
 
 See [Changelog](CHANGELOG.md) for all the release notes.

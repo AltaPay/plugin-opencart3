@@ -58,12 +58,11 @@ class Order {
 
     klarna_payment(KLARNA_DKK_TERMINAL_NAME){
         cy.contains(KLARNA_DKK_TERMINAL_NAME).click({force: true}).wait(4000)
-        cy.get('.pull-right > [type="checkbox"]').click()
-        cy.get('#button-payment-method').click()
+        cy.get('.pull-right > [type="checkbox"]').click().wait(3000)
+        cy.get('#button-payment-method').click().wait(3000)
         cy.get('#button-confirm').click()
         //Klarna Form
         cy.get('#submitbutton').click().wait(10000)
-        cy.get('[id=submitbutton]').click().wait(3000)
         cy.get('[id=klarna-pay-later-fullscreen]').wait(4000).then(function($iFrame){
             const mobileNum = $iFrame.contents().find('[id=email_or_phone]')
             cy.wrap(mobileNum).type('20222222')
@@ -100,13 +99,13 @@ class Order {
         cy.get(':nth-child(1) > :nth-child(8) > [style="min-width: 120px;"] > .btn-group > a.btn > .fa').click()
         cy.get('.nav > :nth-child(3) > a').click()
         cy.get('#quantity').click().type('1')
-        cy.get('#btn-capture').click()
+        cy.get('#btn-capture').click().wait(3000)
         cy.get('#transaction-msg').should('have.text', 'Capture done')
     }
 
     refund() {
         cy.get('#quantity').click().clear().type('1')
-        cy.get('#btn-refund').click()
+        cy.get('#btn-refund').click().wait(3000)
         cy.get('#transaction-msg').should('have.text', 'Refund done')
     }
 
@@ -155,8 +154,8 @@ class Order {
         cy.get('[href="#collapse4"]').click()
         cy.get('#collapse4 > :nth-child(1) > a').click()
         cy.get(':nth-child(1) > :nth-child(8) > [style="min-width: 120px;"] > .btn-group > a.btn > .fa').click()
-        cy.get('.nav > :nth-child(3) > a').click()
-        cy.get('#btn-release').click()
+        cy.get('.nav > :nth-child(3) > a').click().wait(3000)
+        cy.get('#btn-release').click().wait(3000)
         cy.get('#transaction-msg').should('have.text', 'Refund done')
     }
     add_partial_product() {
@@ -170,7 +169,7 @@ class Order {
         cy.get(':nth-child(1) > :nth-child(8) > [style="min-width: 120px;"] > .btn-group > a.btn > .fa').click()
         cy.get('.nav > :nth-child(3) > a').click()
         cy.get('#quantity').click().clear().type('1')
-        cy.get('#btn-capture').click()
+        cy.get('#btn-capture').click().wait(3000)
     }
 
     create_discounts() {

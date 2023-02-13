@@ -62,6 +62,14 @@ addExtensionField($db, 'module', 'altapay');
 
 // Create orders table
 $db->query("CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "altapay_orders` ( `altapay_order_id` int(11) NOT NULL AUTO_INCREMENT, `order_id` int(11) NOT NULL, `created` DATETIME NOT NULL, `modified` DATETIME NOT NULL, `amount` DECIMAL( 10, 2 ) NOT NULL, `currency_code` CHAR(3) NOT NULL, `transaction_id` VARCHAR(24) NOT NULL, `capture_status` INT(1) DEFAULT NULL, `void_status` INT(1) DEFAULT NULL, `refund_status` INT(1) DEFAULT NULL, PRIMARY KEY (`altapay_order_id`) ) ENGINE=MyISAM DEFAULT COLLATE=utf8_general_ci;");
+// Create order reconciliation identifiers table
+$db->query('CREATE TABLE IF NOT EXISTS `' . DB_PREFIX . 'altapay_order_reconciliation` (
+            `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+            `order_id` int(11) unsigned NOT NULL,
+            `reconciliation_identifier` varchar(255) NOT NULL,
+            `transaction_type` varchar(255) NOT NULL,            
+            PRIMARY KEY (`id`)
+        ) ENGINE=MyISAM DEFAULT COLLATE=utf8_general_ci;');
 
 try {
     $api = new Terminals(new Authentication($apiUser, $apiPass, $url));

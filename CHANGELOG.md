@@ -1,3 +1,5 @@
+## [3.6]
+- Add option to export reconciliation data in CSV.
 ## [3.5]
 - Add support for payment reconciliation.
 

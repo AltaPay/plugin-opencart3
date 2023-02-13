@@ -143,6 +143,12 @@ In order to reconcile payments please follow the steps below:
 
 ![opencart_order_view](docs/opencart_order_view.jpg)
 
+Or export the reconciliation data to CSV using the `Export Reconciliation Data` button on the Orders page.
+
+![opencart_export_reconciliation_data](docs/opencart_export_reconciliation_data.jpg)
+
+![opencart_reconciliation_data](docs/opencart_reconciliation_data.png)
+
 6. Navigate to AltaPay Gateway dashboard.
 7. Click on **FUNDING FILES** under **FINANCES** menu.
 8. Download the CSV file.
