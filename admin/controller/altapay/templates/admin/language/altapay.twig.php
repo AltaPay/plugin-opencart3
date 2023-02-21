@@ -13,6 +13,7 @@ $_['text_Altapay_{key}']			= '<img src="view/image/payment/altapay.jpg" alt="Alt
 
 // Entry
 $_['entry_title']					= 'Title';
+$_['entry_custom_message']			= 'Custom Message';
 $_['entry_total']					= 'Total';
 $_['entry_order_status']			= 'Order Status';
 $_['entry_geo_zone']				= 'Geo Zone';
