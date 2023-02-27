@@ -97,6 +97,11 @@ The standard configuration connects the plugin with the test gateway. Take the f
     <td>Assign a title to the terminal</td>
   </tr>
   <tr>
+  <tr>
+    <td><strong>Custom Message</strong></td>
+    <td>In this optional field, you can add custom message for the customers. e.g. guidelines from Danish Forbrugerombudsmanden.</td>
+  </tr>
+  <tr>
     <td><strong>Currency</strong></td>
     <td>Select a currency from the drop down list</td>
   </tr>

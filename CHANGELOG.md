@@ -1,3 +1,5 @@
+## [3.7]
+- Add text field for custom message to be shown with terminal name on checkout.
 ## [3.6]
 - Add option to export reconciliation data in CSV.
 ## [3.5]

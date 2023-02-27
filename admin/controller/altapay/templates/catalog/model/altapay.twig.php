@@ -21,8 +21,8 @@ class ModelExtensionPaymentAltapay{key} extends Model {
 
 			$method_data = array(
 				'code'       => 'Altapay_{key}',
-				'title'      => $this->language->get('text_title'),
-				'terms'      => '',
+				'title'      => $this->config->get('payment_Altapay_{key}_title'),
+				'terms'      => $this->config->get('payment_Altapay_{key}_custom_message'),
 				'sort_order' => $this->config->get('payment_altapay_sort_order')
 			);
 		}
