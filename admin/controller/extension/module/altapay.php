@@ -380,6 +380,18 @@ class ControllerExtensionModuleAltapay extends Controller
             $data['module_altapay_status'] = $this->config->get('module_altapay_status');
         }
 
+        if (isset($this->request->post['module_altapay_fraud_detection'])) {
+            $data['module_altapay_fraud_detection'] = $this->request->post['module_altapay_fraud_detection'];
+        } else {
+            $data['module_altapay_fraud_detection'] = $this->config->get('module_altapay_fraud_detection');
+        }
+
+        if (isset($this->request->post['module_altapay_fraud_detection_action'])) {
+            $data['module_altapay_fraud_detection_action'] = $this->request->post['module_altapay_fraud_detection_action'];
+        } else {
+            $data['module_altapay_fraud_detection_action'] = $this->config->get('module_altapay_fraud_detection_action');
+        }
+
         $data['header'] = $this->load->controller('common/header');
         $data['column_left'] = $this->load->controller('common/column_left');
         $data['footer'] = $this->load->controller('common/footer');
