@@ -70,7 +70,7 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
 
             // Make these as settings
             $payment_type = 'payment'; // TODO Get options from payment method
-            if ($this->config->get('payment_altapay_{key}_payment_action') == 'capture') {
+            if ($this->config->get('payment_Altapay_{key}_payment_action') == 'capture') {
                 $payment_type = 'paymentAndCapture';
             }
 
