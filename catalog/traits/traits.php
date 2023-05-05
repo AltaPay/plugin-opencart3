@@ -63,8 +63,8 @@ trait traitTransactionInfo
      *
      * @return bool
      */
-    public function detectFraud($order_id, $txn_id, $posted_data, $fraud_recommendation ) {
-
+    public function detectFraud($order_id, $txn_id, $posted_data, $fraud_recommendation )
+    {
         $return             = false;
         $detect_fraud       = $this->config->get('module_altapay_fraud_detection');
         $do_action_on_fraud = $this->config->get('module_altapay_fraud_detection_action');
@@ -83,13 +83,10 @@ trait traitTransactionInfo
                 } else {
                     $api = new ReleaseReservation( $auth );
                 }
-                $api->setTransaction( $transaction['TransactionId'] );
+                $api->setTransaction( $transaction->TransactionId );
                 $response = $api->call();
                 if ( $response->Result === 'Success' ) {
                     if ( ! empty( $reconciliation_id ) ) {
-                        $transaction = json_decode( json_encode( $response->Transactions ), true );
-                        $transaction = reset( $transaction );
-
                         $this->model_extension_module_altapay->saveOrderReconciliationIdentifier($order_id, $reconciliation_id, 'refunded');
                         $this->model_extension_module_altapay->updateOrderMeta($order_id, false, true);
 

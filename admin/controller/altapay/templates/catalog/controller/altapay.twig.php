@@ -70,7 +70,7 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
 
             // Make these as settings
             $payment_type = 'payment'; // TODO Get options from payment method
-            if ($this->config->get('Altapay_{key}_payment_action') == 'capture') {
+            if ($this->config->get('payment_altapay_{key}_payment_action') == 'capture') {
                 $payment_type = 'paymentAndCapture';
             }
 
@@ -718,7 +718,7 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
         // Add meta data to the order
         if ($status === 'succeeded') {
             // Add order to transaction table
-            $this->model_extnesion_module_altapay->addOrder($postdata);
+            $this->model_extension_module_altapay->addOrder($postdata);
 
             // Save order reconciliation identifier
             $this->saveReconciliationIdentifier($order_id, $postdata);
