@@ -400,7 +400,7 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
 
         $status         = $postdata['status'];
         $payment_status = $postdata['payment_status'];
-        $fraud_recommendation = !empty( $_POST['fraud_recommendation'] ) ? trim( $_POST['fraud_recommendation'] ) : '';
+        $fraud_recommendation = !empty( $postdata['fraud_recommendation'] ) ? trim( $postdata['fraud_recommendation'] ) : '';
 
         // Add meta data to the order
         if ($status === 'succeeded') {
@@ -412,7 +412,7 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
 
             if($this->detectFraud($order_id, $txnid, $postdata, $fraud_recommendation)){
                 $this->session->data['error'] = 'Error: Payment Declined';
-                $this->model_checkout_order->addOrderHistory($order_id, 1, "Fraud detected: {$_POST['fraud_explanation']}.", false);
+                $this->model_checkout_order->addOrderHistory($order_id, 1, "Fraud detected: {$postdata['fraud_explanation']}.", false);
 
                 $this->response->redirect($this->url->link('checkout/cart', 'user_token=' . $this->session->data['user_token'], true));
             }
