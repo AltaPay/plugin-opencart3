@@ -62,6 +62,7 @@ class Order {
         cy.get('#button-payment-method').click().wait(3000)
         cy.get('#button-confirm').click()
         //Klarna Form
+        cy.reload().wait(3000)
         cy.get('#radio_pay_later').click().wait(3000)
         cy.get('#submitbutton').click().wait(10000)
         cy.get('[id=klarna-pay-later-fullscreen]').wait(4000).then(function($iFrame){
