@@ -65,7 +65,7 @@ trait traitTransactionInfo
      */
     public function detectFraud($order_id, $txn_id, $posted_data, $fraud_recommendation)
     {
-        $return = false;
+        $return             = false;
         $detect_fraud       = $this->config->get('module_altapay_fraud_detection');
         $do_action_on_fraud = $this->config->get('module_altapay_fraud_detection_action');
         $callback           = new Callback($posted_data);
