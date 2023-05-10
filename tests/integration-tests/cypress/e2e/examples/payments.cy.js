@@ -1,4 +1,4 @@
-import Order from '../PageObjects/objects'
+import Order from '../PageObjects/objects.cy'
 
 describe('OpenCart3', function () {
 
@@ -36,7 +36,7 @@ describe('OpenCart3', function () {
         })
     })
 
-    it.only('TC# 02: Klarna Payment', function () {
+    it('TC# 02: Klarna Payment', function () {
 
         const ord = new Order()
         ord.visit()
