@@ -398,8 +398,8 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
             $merchant_error_message = $postdata['merchant_error_message'];
         }
 
-        $status         = $postdata['status'];
-        $payment_status = $postdata['payment_status'];
+        $status               = $postdata['status'];
+        $payment_status       = $postdata['payment_status'];
         $fraud_recommendation = !empty( $postdata['fraud_recommendation'] ) ? trim( $postdata['fraud_recommendation'] ) : '';
 
         // Add meta data to the order
@@ -711,8 +711,8 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
             $merchant_error_message = $postdata['merchant_error_message'];
         }
 
-        $status         = $postdata['status'];
-        $payment_status = $postdata['payment_status'];
+        $status               = $postdata['status'];
+        $payment_status       = $postdata['payment_status'];
         $fraud_recommendation = !empty( $postdata['fraud_recommendation'] ) ? trim( $postdata['fraud_recommendation'] ) : '';
 
         // Add meta data to the order

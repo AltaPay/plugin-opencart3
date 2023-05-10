@@ -54,7 +54,6 @@ trait traitTransactionInfo
         return true;
     }
 
-
     /**
      * @param $order_id
      * @param $txn_id

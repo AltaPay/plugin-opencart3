@@ -33,6 +33,14 @@ class ModelExtensionModuleAltapay extends Model {
         }
     }
 
+    /**
+     * @param int $order_id
+     * @param bool $capture
+     * @param bool $refund
+     * @param bool $void
+     *
+     * @return void
+     */
     public function updateOrderMeta($order_id, $capture = false, $refund = false, $void = false) {
         $status_query = "";
         if ($capture) {
