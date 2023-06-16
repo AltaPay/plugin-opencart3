@@ -3,6 +3,39 @@
 ## Supported versions
 OpenCart 3.x
 
+## Supported Payment Methods & Functionalities
+<table>
+<tr><td>
+
+| Functionalities	    | Support       |
+| :------------------------ | :-----------: |
+| Reservation               | &check;       |
+| Capture                   | &check;       |
+| Instant Capture           | &cross;       |
+| Multi Capture             | &check;       |
+| Recurring / Unscheduled   | &cross;       |
+| Release                   | &check;       |
+| Refund                    | &check;       |
+| Multi Refund              | &check;       |
+| 3D Secure                 | &check;       |
+| Fraud prevention (other)  | &check;       |
+| Reconciliation            | &check;       |
+| MO/TO                     | &cross;       |
+
+</td><td valign="top">
+
+| Payment Method      | Support       |
+| ------------------- | :-----------: |
+| Card                | &check;       |
+| Invoice             | &check;       |
+| ePayments           | &check;       |
+| Bank-to-bank        | &check;       |
+| Interbank           | &cross;       |
+| Cash Wallet         | &check;       |
+| Mobile Wallet       | &check;       |
+
+</td></tr> </table>
+
 ## How to Build
 Run the below command to create the zip file in the dist folder.
 
