@@ -98,6 +98,11 @@ The standard configuration connects the plugin with the test gateway. Take the f
   </tr>
   <tr>
   <tr>
+    <td><strong>Secret</strong></td>
+    <td>Add the payment method secret as defined in the AltaPay payment gateway to enable checksum validation. To disable checksum validation leave it empty.</td>
+  </tr>
+  <tr>
+  <tr>
     <td><strong>Custom Message</strong></td>
     <td>In this optional field, you can add custom message for the customers. e.g. guidelines from Danish Forbrugerombudsmanden.</td>
   </tr>

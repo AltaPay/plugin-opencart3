@@ -88,6 +88,7 @@ try {
 
             // Add settings for each terminal
             addSettingField($db, 'payment_Altapay_' . $termKey, 'payment_Altapay_' . $termKey . '_title', $termName);
+            addSettingField($db, 'payment_Altapay_' . $termKey, 'payment_Altapay_' . $termKey . '_secret', '');
             addSettingField($db, 'payment_Altapay_' . $termKey, 'payment_Altapay_' . $termKey . '_custom_message', '');
             addSettingField($db, 'payment_Altapay_' . $termKey, 'payment_Altapay_' . $termKey . '_currency_id', $currencyId);
             addSettingField($db, 'payment_Altapay_' . $termKey, 'payment_Altapay_' . $termKey . '_order_status_id', '15');

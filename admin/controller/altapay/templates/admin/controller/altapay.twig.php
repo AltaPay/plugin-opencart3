@@ -58,6 +58,7 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
         $data['text_title']      = $this->language->get('text_title');
 
         $data['entry_title']          = $this->language->get('entry_title');
+        $data['entry_secret']         = $this->language->get('entry_secret');
         $data['entry_custom_message'] = $this->language->get('entry_custom_message');
         $data['entry_order_status']   = $this->language->get('entry_order_status');
         $data['entry_total']          = $this->language->get('entry_total');
@@ -108,6 +109,12 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
             $data['payment_altapay_{key}_title'] = $this->request->post['payment_Altapay_{key}_title'];
         } else {
             $data['payment_altapay_{key}_title'] = $this->config->get('payment_Altapay_{key}_title');
+        }
+
+        if (isset($this->request->post['payment_Altapay_{key}_secret'])) {
+            $data['payment_altapay_{key}_secret'] = $this->request->post['payment_Altapay_{key}_secret'];
+        } else {
+            $data['payment_altapay_{key}_secret'] = $this->config->get('payment_Altapay_{key}_secret');
         }
 
         if (isset($this->request->post['payment_Altapay_{key}_custom_message'])) {
