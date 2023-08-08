@@ -50,4 +50,29 @@ trait traitTransactionInfo
 
         return true;
     }
+
+    /**
+     * @param $input_data
+     * @param $shared_secret
+     *
+     * @return string
+     */
+    public function calculateChecksum($input_data, $shared_secret)
+    {
+        $checksum_data = array(
+            'amount' => trim($input_data['amount']),
+            'currency' => trim($input_data['currency']),
+            'shop_orderid' => trim($input_data['shop_orderid']),
+            'secret' => $shared_secret,
+        );
+
+        ksort($checksum_data);
+        $data = array();
+        foreach ($checksum_data as $name => $value) {
+            $data[] = $name . '=' . $value;
+        }
+
+        return md5(join(',', $data));
+    }
+
 }
