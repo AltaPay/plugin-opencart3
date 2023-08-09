@@ -47,15 +47,17 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
                 'user_token=' . $this->session->data['user_token'] . '&type=payment', true));
         }
 
-        $data['heading_title']   = $this->language->get('heading_title');
-        $data['text_extensions'] = $this->language->get('Extensions');
-        $data['text_edit']       = $this->language->get('text_edit');
-        $data['text_enabled']    = $this->language->get('text_enabled');
-        $data['text_disabled']   = $this->language->get('text_disabled');
-        $data['text_all_zones']  = $this->language->get('text_all_zones');
-        $data['text_authorize']  = $this->language->get('text_authorize');
-        $data['text_capture']    = $this->language->get('text_capture');
-        $data['text_title']      = $this->language->get('text_title');
+        $data['heading_title']       = $this->language->get( 'heading_title' );
+        $data['text_extensions']     = $this->language->get( 'Extensions' );
+        $data['text_edit']           = $this->language->get( 'text_edit' );
+        $data['text_enabled']        = $this->language->get( 'text_enabled' );
+        $data['text_disabled']       = $this->language->get( 'text_disabled' );
+        $data['text_all_zones']      = $this->language->get( 'text_all_zones' );
+        $data['text_authorize']      = $this->language->get( 'text_authorize' );
+        $data['text_capture']        = $this->language->get( 'text_capture' );
+        $data['text_title']          = $this->language->get( 'text_title' );
+        $data['text_secret']         = $this->language->get( 'text_secret' );
+        $data['text_custom_message'] = $this->language->get( 'text_custom_message' );
 
         $data['entry_title']          = $this->language->get('entry_title');
         $data['entry_secret']         = $this->language->get('entry_secret');

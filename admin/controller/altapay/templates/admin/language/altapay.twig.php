@@ -10,6 +10,8 @@ $_['text_capture']       = 'Capture';
 $_['text_success']       = 'Success: You have modified AltaPay - {name} payment module!';
 $_['text_edit']          = 'Edit AltaPay - {name}';
 $_['text_Altapay_{key}'] = '<img src="view/image/payment/altapay.jpg" alt="AltaPay - {name}" title="AltaPay - {name}" />';
+$_['text_secret'] = 'Add the payment method secret as defined in the AltaPay payment gateway';
+$_['text_custom_message'] = 'Add custom text to display under terminal name';
 
 // Entry
 $_['entry_title']          = 'Title';
