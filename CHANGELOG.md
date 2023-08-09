@@ -1,5 +1,6 @@
 ## [3.8]
 - Add checksum validation functionality.
+- Support API changes from 20230412.
 ## [3.7]
 - Add text field for custom message to be shown with terminal name on checkout.
 ## [3.6]
