@@ -407,14 +407,15 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
 
         // Add metadata to the order
         if ($status === 'succeeded') {
+
+            $this->handleDuplicatePayment($postdata);
+
             if($this->detectFraud($order_id, $txnid, $postdata, $fraud_recommendation)){
                 $this->session->data['error'] = 'Error: Payment Declined';
                 $this->model_checkout_order->addOrderHistory($order_id, 1, "Fraud detected: {$postdata['fraud_explanation']}.", false);
 
                 $this->response->redirect($this->url->link('checkout/cart', 'user_token=' . $this->session->data['user_token'], true));
             }
-
-            $this->handleDuplicatePayment($postdata);
 
             // Add order to transaction table
             $this->model_extension_module_altapay->addOrder($postdata);
