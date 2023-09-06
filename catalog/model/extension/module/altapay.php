@@ -32,4 +32,29 @@ class ModelExtensionModuleAltapay extends Model {
             }
         }
     }
+
+    /**
+     * @param $order_id
+     * @return array|false
+     */
+    public function getOrder($order_id)
+    {
+        $order_id = filter_var($order_id, FILTER_VALIDATE_INT, ["options" => ["min_range" => 1]]);
+        if ($order_id) {
+            // Load order and transaction data
+            $query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "altapay_orders` WHERE `order_id` = '" . (int)$order_id . "' LIMIT 1");
+            $queryItems = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order_product` WHERE `order_id` = '" . (int)$order_id . "'");
+            $queryTotals = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order_total` WHERE `order_id` = '" . (int)$order_id . "'");
+
+            if ($query->num_rows) {
+                $query->row["items"] = $queryItems->rows;
+                $query->row["totals"] = $queryTotals->rows;
+                return $query->row;
+            } else {
+                return false;
+            }
+        }
+        return false;
+    }
+
 }
