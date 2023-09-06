@@ -53,6 +53,8 @@ addSettingField($db, 'module_altapay', 'module_altapay_gateway_url', $url);
 addSettingField($db, 'module_altapay', 'module_altapay_gateway_username', $apiUser);
 addSettingField($db, 'module_altapay', 'module_altapay_gateway_password', $apiPass);
 addSettingField($db, 'module_altapay', 'module_altapay_status', 1);
+addSettingField($db, 'module_altapay', 'module_altapay_fraud_detection', 0);
+addSettingField($db, 'module_altapay', 'module_altapay_fraud_detection_action', 0);
 // Add currency field
 $currencyId = addCurrencyField($db, "Danish Krone", "DKK", "DKK");
 // Set currency

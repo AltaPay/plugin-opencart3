@@ -32,4 +32,28 @@ class ModelExtensionModuleAltapay extends Model {
             }
         }
     }
+
+    /**
+     * @param int $order_id
+     * @param bool $capture
+     * @param bool $refund
+     * @param bool $void
+     *
+     * @return void
+     */
+    public function updateOrderMeta($order_id, $capture = false, $refund = false, $void = false) {
+        if (filter_var($order_id, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) === false) {
+            $status_query = "";
+            if ($capture) {
+                $status_query = "capture_status='1'";
+            } elseif ($refund) {
+                $status_query = "refund_status='1'";
+            } elseif ($void) {
+                $status_query = "void_status='1'";
+            }
+            if (!empty($status_query)) {
+                $this->db->query("UPDATE " . DB_PREFIX . "altapay_orders SET modified='" . $this->db->escape((string)date('Y-m-d H:i:s', time())) . "', $status_query WHERE order_id='$order_id'");
+            }
+        }
+    }
 }
