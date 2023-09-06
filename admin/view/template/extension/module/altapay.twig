@@ -65,19 +65,54 @@
 							<input type="password" name="module_altapay_gateway_password" class="form-control" value="{{module_altapay_gateway_password}}" />
 						</div>
 					</div>
+
+					<div class="form-group">
+						<label class="col-sm-2 control-label"
+							   for="input-button-size">{{ entry_gateway_fraud_detection }}</label>
+						<div class="col-sm-10">
+							<select name="module_altapay_fraud_detection" id="input-fraud_detection"
+									class="form-control">
+								{% if module_altapay_fraud_detection %}
+									<option value="1" selected="selected">{{ text_enabled }}</option>
+									<option value="0">{{ text_disabled }}</option>
+								{% else %}
+									<option value="1">{{ text_enabled }}</option>
+									<option value="0" selected="selected">{{ text_disabled }}</option>
+								{% endif %}
+							</select>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="col-sm-2 control-label"
+							   for="input-button-size">{{ entry_gateway_fraud_detection_action }}</label>
+						<div class="col-sm-10">
+							<select name="module_altapay_fraud_detection_action" id="input-fraud_detection_action"
+									class="form-control">
+								{% if module_altapay_fraud_detection_action %}
+									<option value="1" selected="selected">{{ text_enabled }}</option>
+									<option value="0">{{ text_disabled }}</option>
+								{% else %}
+									<option value="1">{{ text_enabled }}</option>
+									<option value="0" selected="selected">{{ text_disabled }}</option>
+								{% endif %}
+							</select>
+						</div>
+					</div>
+
 					<div class="form-group">
 						<label class="col-sm-2 control-label" for="input-button-size">{{ entry_gateway_status }}</label>
 						<div class="col-sm-10">
-					<select name="module_altapay_status" id="input-status" class="form-control">
-						{% if module_altapay_status %} 
-						<option value="1" selected="selected">{{ text_enabled }}</option>
-						<option value="0">{{ text_disabled }}</option>
-						{% else %} 
-						<option value="1">{{ text_enabled }}</option>
-						<option value="0" selected="selected">{{ text_disabled }}</option>
-						{% endif %} 
-					</select>
-					</div>
+							<select name="module_altapay_status" id="input-status" class="form-control">
+								{% if module_altapay_status %}
+									<option value="1" selected="selected">{{ text_enabled }}</option>
+									<option value="0">{{ text_disabled }}</option>
+								{% else %}
+									<option value="1">{{ text_enabled }}</option>
+									<option value="0" selected="selected">{{ text_disabled }}</option>
+								{% endif %}
+							</select>
+						</div>
 					</div>
 
 					{% if altapay_terminals %} 
