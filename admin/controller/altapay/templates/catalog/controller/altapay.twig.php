@@ -406,41 +406,7 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
 
         // Add metadata to the order
         if ($status === 'succeeded') {
-            $order = $this->model_extension_module_altapay->getOrder($order_id);
-            $transaction_id = ($order) ? $order['transaction_id'] : '';
-
-            $max_date = '';
-            $latestTransKey = 0;
-            $callback = new Callback($postdata);
-            $response = $callback->call();
-            foreach ($response->Transactions as $key => $value) {
-                if ($value->CreatedDate > $max_date) {
-                    $max_date = $value->CreatedDate;
-                    $latestTransKey = $key;
-                }
-            }
-            /*
-			Exit if payment already completed against the same order and
-			the new transaction ID is different
-			*/
-            if (!empty($transaction_id) and $transaction_id != $txnid) {
-                // Release duplicate transaction from the gateway side
-                $auth = $this->getAuth();
-
-                if (isset($response->Transactions[$latestTransKey])) {
-                    $transaction = $response->Transactions[$latestTransKey];
-                    if (in_array($transaction->TransactionStatus, ['captured', 'bank_payment_finalized'], true)) {
-                        if (in_array($transaction['TransactionStatus'], ['captured', 'bank_payment_finalized'], true)) {
-                            $api = new RefundCapturedReservation($auth);
-                        } else {
-                            $api = new ReleaseReservation($auth);
-                        }
-                        $api->setTransaction($txnid);
-                        $api->call();
-                    }
-                    exit;
-                }
-            }
+            $this->handleDuplicatePayment();
 
             // Add order to transaction table
             $this->model_extension_module_altapay->addOrder($postdata);
@@ -769,42 +735,7 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
 
         // Add meta data to the order
         if ($status === 'succeeded') {
-            $order = $this->model_extension_module_altapay->getOrder($order_id);
-            $transaction_id = ($order) ? $order['transaction_id'] : '';
-
-            $max_date = '';
-            $latestTransKey = 0;
-            $callback = new Callback($postdata);
-            $response = $callback->call();
-            foreach ($response->Transactions as $key => $value) {
-                if ($value->CreatedDate > $max_date) {
-                    $max_date = $value->CreatedDate;
-                    $latestTransKey = $key;
-                }
-            }
-            /*
-			Exit if payment already completed against the same order and
-			the new transaction ID is different
-			*/
-            if (!empty($transaction_id) and $transaction_id != $txnid) {
-                // Release duplicate transaction from the gateway side
-                $auth = $this->getAuth();
-
-                if (isset($response->Transactions[$latestTransKey])) {
-                    $transaction = $response->Transactions[$latestTransKey];
-                    if (in_array($transaction->TransactionStatus, ['captured', 'bank_payment_finalized'], true)) {
-                        if (in_array($transaction['TransactionStatus'], ['captured', 'bank_payment_finalized'], true)) {
-                            $api = new RefundCapturedReservation($auth);
-                        } else {
-                            $api = new ReleaseReservation($auth);
-                        }
-                        $api->setTransaction($txnid);
-                        $api->call();
-                    }
-                    exit;
-                }
-            }
-
+            $this->handleDuplicatePayment();
             $comment = 'Payment approved'; // TODO Make translation
             $this->model_checkout_order->addOrderHistory($order_id, $this->config->get('payment_Altapay_{key}_order_status_id'), $comment, true); // Get pending status
 
@@ -857,6 +788,48 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
             $reconciliation_type = $response->Transactions[0]->ReconciliationIdentifiers[0]->Type;
 
             $this->model_extension_module_altapay->saveOrderReconciliationIdentifier($order_id, $reconciliation_identifier, $reconciliation_type);
+        }
+    }
+
+    /**
+     * @param $post_data
+     * @return void
+     */
+    function handleDuplicatePayment($post_data)
+    {
+        $order_id = $post_data['shop_orderid'];
+        $txn_id = $post_data['transaction_id'];
+        $order = $this->model_extension_module_altapay->getOrder($order_id);
+        $transaction_id = ($order) ? $order['transaction_id'] : '';
+
+        $max_date = '';
+        $latest_trans_key = 0;
+        $callback = new Callback($post_data);
+        $response = $callback->call();
+        foreach ($response->Transactions as $key => $value) {
+            if ($value->CreatedDate > $max_date) {
+                $max_date = $value->CreatedDate;
+                $latest_trans_key = $key;
+            }
+        }
+        //Exit if payment already completed against the same order and the new transaction ID is different
+        if (!empty($transaction_id) and $transaction_id != $txn_id) {
+            // Release duplicate transaction from the gateway side
+            $auth = $this->getAuth();
+
+            if (isset($response->Transactions[$latest_trans_key])) {
+                $transaction = $response->Transactions[$latest_trans_key];
+                if (in_array($transaction->TransactionStatus, ['captured', 'bank_payment_finalized'], true)) {
+                    if (in_array($transaction['TransactionStatus'], ['captured', 'bank_payment_finalized'], true)) {
+                        $api = new RefundCapturedReservation($auth);
+                    } else {
+                        $api = new ReleaseReservation($auth);
+                    }
+                    $api->setTransaction($txn_id);
+                    $api->call();
+                }
+                exit;
+            }
         }
     }
 }
