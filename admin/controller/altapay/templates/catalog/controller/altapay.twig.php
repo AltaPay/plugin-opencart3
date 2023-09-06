@@ -401,15 +401,28 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
             $merchant_error_message = $postdata['merchant_error_message'];
         }
 
-        $status         = $postdata['status'];
-        $payment_status = $postdata['payment_status'];
+        $status               = $postdata['status'];
+        $payment_status       = $postdata['payment_status'];
+        $fraud_recommendation = !empty( $postdata['fraud_recommendation'] ) ? trim( $postdata['fraud_recommendation'] ) : '';
 
         // Add metadata to the order
         if ($status === 'succeeded') {
+            if($this->detectFraud($order_id, $txnid, $postdata, $fraud_recommendation)){
+                $this->session->data['error'] = 'Error: Payment Declined';
+                $this->model_checkout_order->addOrderHistory($order_id, 1, "Fraud detected: {$postdata['fraud_explanation']}.", false);
+
+                $this->response->redirect($this->url->link('checkout/cart', 'user_token=' . $this->session->data['user_token'], true));
+            }
+
             $this->handleDuplicatePayment($postdata);
+
             // Add order to transaction table
             $this->model_extension_module_altapay->addOrder($postdata);
-            $comment = 'Payment authorized.'; // TODO Make translation
+
+            // Save order reconciliation identifier
+            $this->saveReconciliationIdentifier($order_id, $postdata);
+
+            $comment = 'Payment authorized'; // TODO Make translation
 
             if ($postdata['type'] === 'paymentAndCapture' and $postdata['require_capture'] === 'true') {
                 $reconciliation_identifier = sha1($order_id . time() . $txnid);
@@ -434,9 +447,6 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
             }
 
             $this->model_checkout_order->addOrderHistory($order_id, $this->config->get('payment_Altapay_{key}_order_status_id'), $comment, true);
-
-            // Save order reconciliation identifier
-            $this->saveReconciliationIdentifier($order_id, $postdata);
 
             // Redirect to order success
             $this->response->redirect($this->url->link('checkout/success', 'user_token=' . $this->session->data['user_token'], true));
@@ -729,20 +739,30 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
             $merchant_error_message = $postdata['merchant_error_message'];
         }
 
-        $status         = $postdata['status'];
-        $payment_status = $postdata['payment_status'];
+        $status               = $postdata['status'];
+        $payment_status       = $postdata['payment_status'];
+        $fraud_recommendation = !empty( $postdata['fraud_recommendation'] ) ? trim( $postdata['fraud_recommendation'] ) : '';
 
         // Add meta data to the order
         if ($status === 'succeeded') {
+
             $this->handleDuplicatePayment($postdata);
-            $comment = 'Payment approved'; // TODO Make translation
-            $this->model_checkout_order->addOrderHistory($order_id, $this->config->get('payment_Altapay_{key}_order_status_id'), $comment, true); // Get pending status
+
+            if($this->detectFraud($order_id, $txnid, $postdata, $fraud_recommendation)){
+                $this->session->data['error'] = 'Error: Payment Declined';
+                $this->model_checkout_order->addOrderHistory($order_id, 1, "Fraud detected: {$postdata['fraud_explanation']}.", false);
+
+                $this->response->redirect($this->url->link('checkout/cart', 'user_token=' . $this->session->data['user_token'], true));
+            }
 
             // Add order to transaction table
-            $this->model_extnesion_module_altapay->addOrder($postdata);
+            $this->model_extension_module_altapay->addOrder($postdata);
 
             // Save order reconciliation identifier
             $this->saveReconciliationIdentifier($order_id, $postdata);
+
+            $comment = 'Payment approved'; // TODO Make translation
+            $this->model_checkout_order->addOrderHistory($order_id, $this->config->get('payment_Altapay_{key}_order_status_id'), $comment, true); // Get pending status
 
             // Redirect to order success
             $this->response->redirect($this->url->link('checkout/success', 'token=' . $this->session->data['token'], true));
