@@ -406,8 +406,7 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
 
         // Add metadata to the order
         if ($status === 'succeeded') {
-            $this->handleDuplicatePayment();
-
+            $this->handleDuplicatePayment($postdata);
             // Add order to transaction table
             $this->model_extension_module_altapay->addOrder($postdata);
             $comment = 'Payment authorized.'; // TODO Make translation
@@ -735,7 +734,7 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
 
         // Add meta data to the order
         if ($status === 'succeeded') {
-            $this->handleDuplicatePayment();
+            $this->handleDuplicatePayment($postdata);
             $comment = 'Payment approved'; // TODO Make translation
             $this->model_checkout_order->addOrderHistory($order_id, $this->config->get('payment_Altapay_{key}_order_status_id'), $comment, true); // Get pending status
 
