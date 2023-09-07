@@ -459,8 +459,8 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
                                 'chargeable' => number_format($charge, 2),
                                 'message'    => 'Refund done',
                             );
-                            // Update order with status captured
-                            $this->model_extension_module_altapay->updateOrderMeta($order_id, false, false, 1);
+                            // Update order with status refunded
+                            $this->model_extension_module_altapay->updateOrderMeta($order_id, false, true, false);
                             // Add order reconciliation identifier
                             $this->model_extension_module_altapay->saveOrderReconciliationIdentifier($order_id, $reconciliation_identifier, 'refunded');
                         }
