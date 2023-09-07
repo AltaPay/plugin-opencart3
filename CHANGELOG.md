@@ -1,3 +1,6 @@
+## [3.10]
+- Fix: Refund/Release duplicate payments.
+- Fix: Klarna payment not capturing when auto-capture is enabled.
 ## [3.8]
 - Add support for fraud detection service.
 - Support API changes from 20230412.

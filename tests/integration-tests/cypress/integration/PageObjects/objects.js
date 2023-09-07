@@ -60,7 +60,7 @@ class Order {
         cy.contains(KLARNA_DKK_TERMINAL_NAME).click({force: true}).wait(4000)
         cy.get('.pull-right > [type="checkbox"]').click().wait(3000)
         cy.get('#button-payment-method').click().wait(3000)
-        cy.get('#button-confirm').click().wait(3000)
+        cy.get('#button-confirm').click().wait(5000)
         //Klarna Form
         cy.get('#radio_pay_later').click().wait(3000)
         cy.get('#submitbutton').click().wait(10000)

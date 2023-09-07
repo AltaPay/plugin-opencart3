@@ -5,6 +5,9 @@ require_once dirname(__file__, 4) . './../altapay-libs/autoload.php';
 
 use Altapay\Api\Ecommerce\Callback;
 use Altapay\Api\Ecommerce\PaymentRequest;
+use Altapay\Api\Payments\CaptureReservation;
+use Altapay\Api\Payments\RefundCapturedReservation;
+use Altapay\Api\Payments\ReleaseReservation;
 use Altapay\Exceptions\ClientException;
 use Altapay\Exceptions\ResponseHeaderException;
 use Altapay\Exceptions\ResponseMessageException;
@@ -402,13 +405,10 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
         $payment_status       = $postdata['payment_status'];
         $fraud_recommendation = !empty( $postdata['fraud_recommendation'] ) ? trim( $postdata['fraud_recommendation'] ) : '';
 
-        // Add meta data to the order
+        // Add metadata to the order
         if ($status === 'succeeded') {
-            // Add order to transaction table
-            $this->model_extension_module_altapay->addOrder($postdata);
 
-            // Save order reconciliation identifier
-            $this->saveReconciliationIdentifier($order_id, $postdata);
+            $this->handleDuplicatePayment($postdata);
 
             if($this->detectFraud($order_id, $txnid, $postdata, $fraud_recommendation)){
                 $this->session->data['error'] = 'Error: Payment Declined';
@@ -417,7 +417,36 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
                 $this->response->redirect($this->url->link('checkout/cart', 'user_token=' . $this->session->data['user_token'], true));
             }
 
+            // Add order to transaction table
+            $this->model_extension_module_altapay->addOrder($postdata);
+
+            // Save order reconciliation identifier
+            $this->saveReconciliationIdentifier($order_id, $postdata);
+
             $comment = 'Payment authorized'; // TODO Make translation
+
+            if ($postdata['type'] === 'paymentAndCapture' and $postdata['require_capture'] === 'true') {
+                $reconciliation_identifier = sha1($order_id . time() . $txnid);
+                try {
+                    $api = new CaptureReservation($this->getAuth());
+                    $api->setAmount(round($postdata['amount'], 2));
+                    $api->setTransaction($postdata['transaction_id']);
+                    $api->setReconciliationIdentifier($reconciliation_identifier);
+                    $capture_response = $api->call();
+                    if ($capture_response) {
+                        $comment = 'Payment captured.';
+                        $this->model_extension_module_altapay->updateOrderMeta($order_id, true);
+                        $this->model_extension_module_altapay->saveOrderReconciliationIdentifier($order_id, $reconciliation_identifier);
+                    }
+                } catch (InvalidArgumentException $e) {
+                    $comment .= " Could not automatically capture payment.";
+                } catch (ResponseHeaderException $e) {
+                    $comment .= " Could not automatically capture payment.";
+                } catch (\Exception $e) {
+                    $comment .= " Could not automatically capture payment.";
+                }
+            }
+
             $this->model_checkout_order->addOrderHistory($order_id, $this->config->get('payment_Altapay_{key}_order_status_id'), $comment, true);
 
             // Redirect to order success
@@ -717,11 +746,8 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
 
         // Add meta data to the order
         if ($status === 'succeeded') {
-            // Add order to transaction table
-            $this->model_extension_module_altapay->addOrder($postdata);
 
-            // Save order reconciliation identifier
-            $this->saveReconciliationIdentifier($order_id, $postdata);
+            $this->handleDuplicatePayment($postdata);
 
             if($this->detectFraud($order_id, $txnid, $postdata, $fraud_recommendation)){
                 $this->session->data['error'] = 'Error: Payment Declined';
@@ -729,6 +755,12 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
 
                 $this->response->redirect($this->url->link('checkout/cart', 'user_token=' . $this->session->data['user_token'], true));
             }
+
+            // Add order to transaction table
+            $this->model_extension_module_altapay->addOrder($postdata);
+
+            // Save order reconciliation identifier
+            $this->saveReconciliationIdentifier($order_id, $postdata);
 
             $comment = 'Payment approved'; // TODO Make translation
             $this->model_checkout_order->addOrderHistory($order_id, $this->config->get('payment_Altapay_{key}_order_status_id'), $comment, true); // Get pending status
@@ -776,6 +808,48 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
             $reconciliation_type = $response->Transactions[0]->ReconciliationIdentifiers[0]->Type;
 
             $this->model_extension_module_altapay->saveOrderReconciliationIdentifier($order_id, $reconciliation_identifier, $reconciliation_type);
+        }
+    }
+
+    /**
+     * @param $post_data
+     * @return void
+     */
+    function handleDuplicatePayment($post_data)
+    {
+        $order_id = $post_data['shop_orderid'];
+        $txn_id = $post_data['transaction_id'];
+        $order = $this->model_extension_module_altapay->getOrder($order_id);
+        $transaction_id = ($order) ? $order['transaction_id'] : '';
+
+        $max_date = '';
+        $latest_trans_key = 0;
+        $callback = new Callback($post_data);
+        $response = $callback->call();
+        foreach ($response->Transactions as $key => $value) {
+            if ($value->CreatedDate > $max_date) {
+                $max_date = $value->CreatedDate;
+                $latest_trans_key = $key;
+            }
+        }
+        //Exit if payment already completed against the same order and the new transaction ID is different
+        if (!empty($transaction_id) and $transaction_id != $txn_id) {
+            // Release duplicate transaction from the gateway side
+            $auth = $this->getAuth();
+
+            if (isset($response->Transactions[$latest_trans_key])) {
+                $transaction = $response->Transactions[$latest_trans_key];
+                if (in_array($transaction->TransactionStatus, ['captured', 'bank_payment_finalized'], true)) {
+                    if (in_array($transaction['TransactionStatus'], ['captured', 'bank_payment_finalized'], true)) {
+                        $api = new RefundCapturedReservation($auth);
+                    } else {
+                        $api = new ReleaseReservation($auth);
+                    }
+                    $api->setTransaction($txn_id);
+                    $api->call();
+                }
+                exit;
+            }
         }
     }
 }
