@@ -1,3 +1,5 @@
+## [3.11]
+- Add support for Finshark (Open Banking).
 ## [3.10]
 - Fix: Refund/Release duplicate payments.
 - Fix: Klarna payment not capturing when auto-capture is enabled.
