@@ -767,10 +767,12 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
             if($payment_status === 'bank_payment_refunded') {
                 $row = $this->db->query("SELECT transaction_id FROM `" . DB_PREFIX . "altapay_orders` WHERE `capture_status` = '1' AND `order_id` = '" . (int)$order_id . "' LIMIT 1")->row;
                 if ($row and $row['transaction_id'] === $txnid) {
+                    $comment = 'Payment refunded'; // TODO Make translation
+                    $this->model_checkout_order->addOrderHistory($order_id, $this->config->get('payment_Altapay_{key}_order_status_id'), $comment, true);
                     // Update order with status refunded
                     $this->model_extension_module_altapay->updateOrderMeta($order_id, false, true, false);
                 }
-                exit;
+                exit('Order refund status updated.');
             }
             // Add order to transaction table
             $this->model_extension_module_altapay->addOrder($postdata);
