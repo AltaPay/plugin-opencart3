@@ -167,7 +167,7 @@ describe('OpenCart3', function () {
             }
         })
     })
-    it('TC# 06: iDEAL Release Payment', function () {
+    it('TC# 06: iDEAL Refund Payment', function () {
 
         const ord = new Order()
         ord.visit()
@@ -185,7 +185,7 @@ describe('OpenCart3', function () {
                     if ($a.find("label:contains('" + admin.iDEAL_EUR_TERMINAL + "')").length) {
                         ord.ideal_payment(admin.iDEAL_EUR_TERMINAL)
                         ord.admin()
-                        ord.release_payment()
+                        ord.ideal_refund()
                     } else {
                         cy.log(admin.iDEAL_EUR_TERMINAL + ' not found in page')
                         this.skip()
