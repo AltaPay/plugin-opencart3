@@ -42,7 +42,7 @@ class ModelExtensionModuleAltapay extends Model {
      * @return void
      */
     public function updateOrderMeta($order_id, $capture = false, $refund = false, $void = false) {
-        if (filter_var($order_id, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) === false) {
+        if (filter_var($order_id, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) !== false) {
             $status_query = "";
             if ($capture) {
                 $status_query = "capture_status='1'";
