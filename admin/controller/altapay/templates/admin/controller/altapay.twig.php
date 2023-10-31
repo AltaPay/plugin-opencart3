@@ -39,6 +39,9 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
         $this->load->model('setting/setting');
 
         if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
+            if ($this->request->post['payment_altapay_{key}_secret'] === '*****') {
+                unset($this->request->post['payment_altapay_{key}_secret']);
+            }
             $this->model_setting_setting->editSetting('payment_Altapay_{key}', $this->request->post);
 
             $this->session->data['success'] = $this->language->get('text_success');
@@ -179,6 +182,10 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
             $data['payment_altapay_{key}_currency_id'] = $this->request->post['payment_Altapay_{key}_currency_id'];
         } else {
             $data['payment_altapay_{key}_currency_id'] = $this->config->get('payment_Altapay_{key}_currency_id');
+        }
+
+        if (!empty($data['payment_altapay_{key}_secret'])) {
+            $data['payment_altapay_{key}_secret'] = '*****';
         }
 
         $data['header']      = $this->load->controller('common/header');

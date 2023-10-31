@@ -273,6 +273,9 @@ class ControllerExtensionModuleAltapay extends Controller
                 }
             }
         } elseif (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate() && isset($_POST['savestay'])) {
+            if ($this->request->post['module_altapay_gateway_password'] === '*****') {
+                unset($this->request->post['module_altapay_gateway_password']);
+            }
             $this->model_setting_setting->editSetting('module_altapay', $this->request->post);
             $data['save_success'] = $this->language->get('text_success');
         } elseif (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
@@ -397,6 +400,10 @@ class ControllerExtensionModuleAltapay extends Controller
         $data['footer'] = $this->load->controller('common/footer');
 
         $data['altapay_terminals'] = $this->getTerminals($data);
+
+        if (!empty($data['module_altapay_gateway_password'])) {
+            $data['module_altapay_gateway_password'] = '*****';
+        }
 
         $this->response->setOutput($this->load->view('extension/module/altapay', $data));
     }
