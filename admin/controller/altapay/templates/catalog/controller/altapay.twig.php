@@ -453,6 +453,11 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
                 }
             }
 
+            if($postdata['type'] === 'paymentAndCapture' and in_array($postdata['payment_status'], ['bank_payment_finalized', 'captured'], true)) {
+                $comment = 'Payment captured.';
+                $this->model_extension_module_altapay->updateOrderMeta($order_id, true);
+            }
+
             $this->model_checkout_order->addOrderHistory($order_id, $this->config->get('payment_Altapay_{key}_order_status_id'), $comment, true);
 
             // Redirect to order success
@@ -788,11 +793,21 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
                 $this->response->redirect($this->url->link('checkout/cart', 'user_token=' . $this->session->data['user_token'], true));
             }
 
-            // Add order to transaction table
-            $this->model_extension_module_altapay->addOrder($postdata);
-
             // Save order reconciliation identifier
             $this->saveReconciliationIdentifier($order_id, $postdata);
+
+            if($payment_status === 'bank_payment_refunded') {
+                $row = $this->db->query("SELECT transaction_id FROM `" . DB_PREFIX . "altapay_orders` WHERE `capture_status` = '1' AND `order_id` = '" . (int)$order_id . "' LIMIT 1")->row;
+                if ($row and $row['transaction_id'] === $txnid) {
+                    $comment = 'Payment refunded.'; // TODO Make translation
+                    $this->model_checkout_order->addOrderHistory($order_id, 11, $comment, true);
+                    // Update order with status refunded
+                    $this->model_extension_module_altapay->updateOrderMeta($order_id, false, true, false);
+                }
+                exit('Order refund status updated.');
+            }
+            // Add order to transaction table
+            $this->model_extension_module_altapay->addOrder($postdata);
 
             $comment = 'Payment approved'; // TODO Make translation
             $this->model_checkout_order->addOrderHistory($order_id, $this->config->get('payment_Altapay_{key}_order_status_id'), $comment, true); // Get pending status
@@ -836,10 +851,12 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
         $callback = new Callback($post_data);
         $response = $callback->call();
         if ($response && is_array($response->Transactions) && !empty($response->Transactions[0]->ReconciliationIdentifiers)) {
-            $reconciliation_identifier = $response->Transactions[0]->ReconciliationIdentifiers[0]->Id;
-            $reconciliation_type = $response->Transactions[0]->ReconciliationIdentifiers[0]->Type;
+            foreach ($response->Transactions[0]->ReconciliationIdentifiers as $reconciliationIdentifier) {
+                $reconciliation_identifier = $reconciliationIdentifier->Id;
+                $reconciliation_type = $reconciliationIdentifier->Type;
 
-            $this->model_extension_module_altapay->saveOrderReconciliationIdentifier($order_id, $reconciliation_identifier, $reconciliation_type);
+                $this->model_extension_module_altapay->saveOrderReconciliationIdentifier($order_id, $reconciliation_identifier, $reconciliation_type);
+            }
         }
     }
 

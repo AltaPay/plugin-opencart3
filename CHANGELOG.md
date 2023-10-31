@@ -1,5 +1,7 @@
-## [3.11]
+## [3.12]
 - Add checksum validation functionality.
+## [3.11]
+- Add support for Open Banking (Using Finshark)
 ## [3.10]
 - Fix: Refund/Release duplicate payments.
 - Fix: Klarna payment not capturing when auto-capture is enabled.

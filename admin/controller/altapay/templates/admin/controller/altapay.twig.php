@@ -431,7 +431,7 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
                         $this->api_error = $e->getMessage();
                     }
 
-                    if ($response && $response->Result === 'Success') {
+                    if ($response && in_array($response->Result,['Success', 'Open'], true)) {
                         $api = new Payments($this->getAuth());
                         $api->setTransaction($txnID);
                         // Get payment data
@@ -450,6 +450,10 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
                                     $charge = 0.00;
                                 }
                             }
+                            $msg = 'Refund done';
+                            if ($response->Result === 'Open'){
+                                $msg = 'Refund is in progress.';
+                            }
                             // Add to order history TODO
                             $json = array(
                                 'status'     => 'ok',
@@ -457,12 +461,14 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
                                 'reserved'   => number_format($reserved, 2),
                                 'refunded'   => number_format($refunded, 2),
                                 'chargeable' => number_format($charge, 2),
-                                'message'    => 'Refund done',
+                                'message'    => $msg,
                             );
-                            // Update order with status refunded
-                            $this->model_extension_module_altapay->updateOrderMeta($order_id, false, true, false);
-                            // Add order reconciliation identifier
-                            $this->model_extension_module_altapay->saveOrderReconciliationIdentifier($order_id, $reconciliation_identifier, 'refunded');
+                            if($response->Result === 'Success') {
+                                // Update order with status refunded
+                                $this->model_extension_module_altapay->updateOrderMeta($order_id, false, true, false);
+                                // Add order reconciliation identifier
+                                $this->model_extension_module_altapay->saveOrderReconciliationIdentifier($order_id, $reconciliation_identifier, 'refunded');
+                            }
                         }
                         // Set order to cancelled TODO
                     } else {
