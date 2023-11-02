@@ -20,8 +20,9 @@ Installing this plug-in will enable the web shop to handle card transactions thr
 [Installation](#installation)
 
 [Configuration](#configuration)
+* [Configure fraud detection](#configure-fraud-detection)
 
-[Synchronize payment methods](#synchronize-payment-methods)
+* [Synchronize payment methods](#synchronize-payment-methods)
 
 [Reconcile Orders](#reconcile-orders)
 
@@ -98,6 +99,11 @@ The standard configuration connects the plugin with the test gateway. Take the f
   </tr>
   <tr>
   <tr>
+    <td><strong>Secret</strong></td>
+    <td>Add the payment method secret as defined in the AltaPay payment gateway to enable checksum validation. To disable checksum validation leave it empty.</td>
+  </tr>
+  <tr>
+  <tr>
     <td><strong>Custom Message</strong></td>
     <td>In this optional field, you can add custom message for the customers. e.g. guidelines from Danish Forbrugerombudsmanden.</td>
   </tr>
@@ -129,7 +135,12 @@ The standard configuration connects the plugin with the test gateway. Take the f
 This will populate all the available terminals for the current API user.
 If you face any issue click on **Refresh connection** button, this will fetch the terminals again and populate the list.
 
-## Synchronize payment methods
+### Configure fraud detection
+
+If you wish to enable fraud detection service and release/refund if fraud is detected then refer to the below screenshot.
+![fraud_detection_service.png](https://github.com/AltaPay/plugin-opencart3/blob/main/docs/opencart_fraud_detection_service.png)
+
+### Synchronize payment methods
 
 To synchronize the terminals with the gateway, click on the **Sync terminals** button. This will fetch the latest terminals from the gateway and will automatically configure based on the store country.
 
@@ -146,13 +157,13 @@ In order to reconcile payments please follow the steps below:
 4. Select the AltaPay terminal tabs from **Order History** section.
 5. Copy the **Reconciliation Identifier** from the **Payment Information** section.
 
-![opencart_order_view](docs/opencart_order_view.jpg)
+![opencart_order_view](https://github.com/AltaPay/plugin-opencart3/blob/main/docs/opencart_order_view.jpg)
 
 Or export the reconciliation data to CSV using the `Export Reconciliation Data` button on the Orders page.
 
-![opencart_export_reconciliation_data](docs/opencart_export_reconciliation_data.jpg)
+![opencart_export_reconciliation_data](https://github.com/AltaPay/plugin-opencart3/blob/main/docs/opencart_export_reconciliation_data.jpg)
 
-![opencart_reconciliation_data](docs/opencart_reconciliation_data.png)
+![opencart_reconciliation_data](https://github.com/AltaPay/plugin-opencart3/blob/main/docs/opencart_reconciliation_data.png)
 
 6. Navigate to AltaPay Gateway dashboard.
 7. Click on **FUNDING FILES** under **FINANCES** menu.
@@ -162,7 +173,7 @@ Or export the reconciliation data to CSV using the `Export Reconciliation Data` 
 
 **Sample AltaPay Gateway CSV:**
 
-![funding_list_csv](docs/funding_list_csv.png)
+![funding_list_csv](https://github.com/AltaPay/plugin-opencart3/blob/main/docs/funding_list_csv.png)
 
 
 # Supported versions

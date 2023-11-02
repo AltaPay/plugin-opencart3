@@ -1,3 +1,5 @@
+## [3.12]
+- Add checksum validation functionality.
 ## [3.11]
 - Add support for Open Banking (Using Finshark)
 ## [3.10]

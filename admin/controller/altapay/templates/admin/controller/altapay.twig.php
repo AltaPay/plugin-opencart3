@@ -39,6 +39,9 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
         $this->load->model('setting/setting');
 
         if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
+            if ($this->request->post['payment_altapay_{key}_secret'] === '*****') {
+                unset($this->request->post['payment_altapay_{key}_secret']);
+            }
             $this->model_setting_setting->editSetting('payment_Altapay_{key}', $this->request->post);
 
             $this->session->data['success'] = $this->language->get('text_success');
@@ -47,17 +50,20 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
                 'user_token=' . $this->session->data['user_token'] . '&type=payment', true));
         }
 
-        $data['heading_title']   = $this->language->get('heading_title');
-        $data['text_extensions'] = $this->language->get('Extensions');
-        $data['text_edit']       = $this->language->get('text_edit');
-        $data['text_enabled']    = $this->language->get('text_enabled');
-        $data['text_disabled']   = $this->language->get('text_disabled');
-        $data['text_all_zones']  = $this->language->get('text_all_zones');
-        $data['text_authorize']  = $this->language->get('text_authorize');
-        $data['text_capture']    = $this->language->get('text_capture');
-        $data['text_title']      = $this->language->get('text_title');
+        $data['heading_title']       = $this->language->get( 'heading_title' );
+        $data['text_extensions']     = $this->language->get( 'Extensions' );
+        $data['text_edit']           = $this->language->get( 'text_edit' );
+        $data['text_enabled']        = $this->language->get( 'text_enabled' );
+        $data['text_disabled']       = $this->language->get( 'text_disabled' );
+        $data['text_all_zones']      = $this->language->get( 'text_all_zones' );
+        $data['text_authorize']      = $this->language->get( 'text_authorize' );
+        $data['text_capture']        = $this->language->get( 'text_capture' );
+        $data['text_title']          = $this->language->get( 'text_title' );
+        $data['text_secret']         = $this->language->get( 'text_secret' );
+        $data['text_custom_message'] = $this->language->get( 'text_custom_message' );
 
         $data['entry_title']          = $this->language->get('entry_title');
+        $data['entry_secret']         = $this->language->get('entry_secret');
         $data['entry_custom_message'] = $this->language->get('entry_custom_message');
         $data['entry_order_status']   = $this->language->get('entry_order_status');
         $data['entry_total']          = $this->language->get('entry_total');
@@ -108,6 +114,12 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
             $data['payment_altapay_{key}_title'] = $this->request->post['payment_Altapay_{key}_title'];
         } else {
             $data['payment_altapay_{key}_title'] = $this->config->get('payment_Altapay_{key}_title');
+        }
+
+        if (isset($this->request->post['payment_Altapay_{key}_secret'])) {
+            $data['payment_altapay_{key}_secret'] = $this->request->post['payment_Altapay_{key}_secret'];
+        } else {
+            $data['payment_altapay_{key}_secret'] = $this->config->get('payment_Altapay_{key}_secret');
         }
 
         if (isset($this->request->post['payment_Altapay_{key}_custom_message'])) {
@@ -170,6 +182,10 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
             $data['payment_altapay_{key}_currency_id'] = $this->request->post['payment_Altapay_{key}_currency_id'];
         } else {
             $data['payment_altapay_{key}_currency_id'] = $this->config->get('payment_Altapay_{key}_currency_id');
+        }
+
+        if (!empty($data['payment_altapay_{key}_secret'])) {
+            $data['payment_altapay_{key}_secret'] = '*****';
         }
 
         $data['header']      = $this->load->controller('common/header');

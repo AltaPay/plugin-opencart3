@@ -391,6 +391,12 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
         $currency = $postdata['currency'];
         $txnid    = $postdata['transaction_id'];
 
+        $secret = $this->config->get('payment_Altapay_{key}_secret');
+        $checksum = isset($postdata['checksum']) ? trim($postdata['checksum']) : '';
+        if (!empty($checksum) and !empty($secret) and $this->calculateChecksum($postdata, $secret) !== $checksum) {
+            exit;
+        }
+
         $error_message = '';
         if (isset($postdata['error_message'])) {
             $error_message = $postdata['error_message'];
@@ -475,6 +481,12 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
         $currency = $postdata['currency'];
         $txnid    = $postdata['transaction_id'];
 
+        $secret = $this->config->get('payment_Altapay_{key}_secret');
+        $checksum = isset($postdata['checksum']) ? trim($postdata['checksum']) : '';
+        if (!empty($checksum) and !empty($secret) and $this->calculateChecksum($postdata, $secret) !== $checksum) {
+            exit;
+        }
+
         $error_message = '';
         if (isset($postdata['error_message'])) {
             $error_message = $postdata['error_message'];
@@ -519,6 +531,12 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
         $status         = $postdata['status'];
         $payment_status = $postdata['payment_status'];
 
+        $secret = $this->config->get('payment_Altapay_{key}_secret');
+        $checksum = isset($postdata['checksum']) ? trim($postdata['checksum']) : '';
+        if (!empty($checksum) and !empty($secret) and $this->calculateChecksum($postdata, $secret) !== $checksum) {
+            exit;
+        }
+
         $error_message = '';
         if (isset($postdata['error_message'])) {
             $error_message = $postdata['error_message'];
@@ -546,6 +564,14 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
 
     public function paymentwindow()
     {
+        // Get post data
+        $postdata = $_POST;
+        $secret   = $this->config->get('payment_Altapay_{key}_secret');
+        $checksum = isset($postdata['checksum']) ? trim($postdata['checksum']) : '';
+        if (!empty($checksum) and !empty($secret) and $this->calculateChecksum($postdata, $secret) !== $checksum) {
+            exit;
+        }
+
         $this->load->language('extension/payment/Altapay_{key}');
         $this->document->setTitle($this->language->get('payment_window_title'));
 
@@ -734,6 +760,12 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
         $order_id = $postdata['shop_orderid'];
         $currency = $postdata['currency'];
         $txnid    = $postdata['transaction_id'];
+
+        $secret = $this->config->get('payment_Altapay_{key}_secret');
+        $checksum = isset($postdata['checksum']) ? trim($postdata['checksum']) : '';
+        if (!empty($checksum) and !empty($secret) and $this->calculateChecksum($postdata, $secret) !== $checksum) {
+            exit;
+        }
 
         $error_message = '';
         if (isset($postdata['error_message'])) {
