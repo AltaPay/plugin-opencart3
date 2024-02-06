@@ -1,3 +1,5 @@
+## [3.13]
+- Add support for Twint.
 ## [3.12]
 - Add checksum validation functionality.
 ## [3.11]
