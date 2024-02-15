@@ -39,8 +39,8 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
         $this->load->model('setting/setting');
 
         if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
-            if ($this->request->post['payment_altapay_{key}_secret'] === '*****') {
-                unset($this->request->post['payment_altapay_{key}_secret']);
+            if ($this->request->post['payment_Altapay_{key}_secret'] === '*****') {
+                unset($this->request->post['payment_Altapay_{key}_secret']);
             }
             $this->model_setting_setting->editSetting('payment_Altapay_{key}', $this->request->post);
 
