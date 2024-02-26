@@ -346,6 +346,7 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
             $customer->setShipping($address);
         }
         $customer->setEmail($order_info['email']);
+        $customer->setUsername($order_info['email']);
         $customer->setClientIP($_SERVER['REMOTE_ADDR']);
         $customer->setClientAcceptLanguage(substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2));
         $customer->setHttpUserAgent($_SERVER['HTTP_USER_AGENT']);
