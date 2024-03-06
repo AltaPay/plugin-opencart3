@@ -1,3 +1,5 @@
+## [3.14]
+- Add support for Trustly.
 ## [3.13]
 - Add support for Twint.
 ## [3.12]
