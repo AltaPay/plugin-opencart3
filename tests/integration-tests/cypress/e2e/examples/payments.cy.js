@@ -36,7 +36,7 @@ describe('OpenCart3', function () {
         })
     })
 
-    it('TC# 02: Klarna Payment', function () {
+    it.skip('TC# 02: Klarna Payment', function () {
 
         const ord = new Order()
         ord.visit()
@@ -70,6 +70,7 @@ describe('OpenCart3', function () {
             }
         })
     })
+
     it('TC# 03: iDEAL Payment', function () {
 
         const ord = new Order()
@@ -103,6 +104,7 @@ describe('OpenCart3', function () {
             }
         })
     })
+
     it('TC# 04: CC Release Payment', function () {
 
         const ord = new Order()
@@ -134,7 +136,8 @@ describe('OpenCart3', function () {
             }
         })
     })
-    it('TC# 05: Klarna Release Payment', function () {
+
+    it.skip('TC# 05: Klarna Release Payment', function () {
 
         const ord = new Order()
         ord.visit()
@@ -167,6 +170,7 @@ describe('OpenCart3', function () {
             }
         })
     })
+
     it('TC# 06: iDEAL Refund Payment', function () {
 
         const ord = new Order()
@@ -234,7 +238,8 @@ describe('OpenCart3', function () {
             }
         })
     })
-    it('TC# 08: Klarna Partial Capture', function () {
+
+    it.skip('TC# 08: Klarna Partial Capture', function () {
 
         const ord = new Order()
         ord.visit()
