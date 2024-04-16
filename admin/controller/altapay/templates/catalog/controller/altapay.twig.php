@@ -522,6 +522,9 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
         // Load order model
         $this->load->model('checkout/order');
 
+        // Load AltaPay model
+        $this->load->model('extension/module/altapay');
+
         // Get post data
         $postdata = $_POST;
 
