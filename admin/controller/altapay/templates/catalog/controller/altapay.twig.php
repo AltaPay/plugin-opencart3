@@ -522,6 +522,9 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
         // Load order model
         $this->load->model('checkout/order');
 
+        // Load AltaPay model
+        $this->load->model('extension/module/altapay');
+
         // Get post data
         $postdata = $_POST;
 
@@ -536,6 +539,76 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
         $checksum = isset($postdata['checksum']) ? trim($postdata['checksum']) : '';
         if (!empty($checksum) and !empty($secret) and $this->calculateChecksum($postdata, $secret) !== $checksum) {
             exit;
+        }
+
+        $max_date = '';
+        $latest_trans_key = 0;
+        $callback = new Callback($postdata);
+        $response = $callback->call();
+        foreach ($response->Transactions as $key => $value) {
+            if ($value->CreatedDate > $max_date) {
+                $max_date = $value->CreatedDate;
+                $latest_trans_key = $key;
+            }
+        }
+
+        if (isset($response->Transactions[$latest_trans_key])) {
+            $transaction = $response->Transactions[$latest_trans_key];
+        }
+
+        // Add metadata to the order
+        if (!empty($transaction) and $transaction->ReservedAmount > 0) {
+
+            $this->handleDuplicatePayment($postdata);
+
+            $fraud_recommendation = !empty( $postdata['fraud_recommendation'] ) ? trim( $postdata['fraud_recommendation'] ) : '';
+
+            if($this->detectFraud($order_id, $txnid, $postdata, $fraud_recommendation)){
+                $this->session->data['error'] = 'Error: Payment Declined';
+                $this->model_checkout_order->addOrderHistory($order_id, 1, "Fraud detected: {$postdata['fraud_explanation']}.", false);
+
+                $this->response->redirect($this->url->link('checkout/cart', 'user_token=' . $this->session->data['user_token'], true));
+            }
+
+            // Add order to transaction table
+            $this->model_extension_module_altapay->addOrder($postdata);
+
+            // Save order reconciliation identifier
+            $this->saveReconciliationIdentifier($order_id, $postdata);
+
+            $comment = 'Payment authorized'; // TODO Make translation
+
+            if ($postdata['type'] === 'paymentAndCapture' and $postdata['require_capture'] === 'true') {
+                $reconciliation_identifier = sha1($order_id . time() . $txnid);
+                try {
+                    $api = new CaptureReservation($this->getAuth());
+                    $api->setAmount(round($postdata['amount'], 2));
+                    $api->setTransaction($postdata['transaction_id']);
+                    $api->setReconciliationIdentifier($reconciliation_identifier);
+                    $capture_response = $api->call();
+                    if ($capture_response) {
+                        $comment = 'Payment captured.';
+                        $this->model_extension_module_altapay->updateOrderMeta($order_id, true);
+                        $this->model_extension_module_altapay->saveOrderReconciliationIdentifier($order_id, $reconciliation_identifier);
+                    }
+                } catch (InvalidArgumentException $e) {
+                    $comment .= " Could not automatically capture payment.";
+                } catch (ResponseHeaderException $e) {
+                    $comment .= " Could not automatically capture payment.";
+                } catch (\Exception $e) {
+                    $comment .= " Could not automatically capture payment.";
+                }
+            }
+
+            if($postdata['type'] === 'paymentAndCapture' and in_array($postdata['payment_status'], ['bank_payment_finalized', 'captured'], true)) {
+                $comment = 'Payment captured.';
+                $this->model_extension_module_altapay->updateOrderMeta($order_id, true);
+            }
+
+            $this->model_checkout_order->addOrderHistory($order_id, $this->config->get('payment_Altapay_{key}_order_status_id'), $comment, true);
+
+            // Redirect to order success
+            $this->response->redirect($this->url->link('checkout/success', 'user_token=' . $this->session->data['user_token'], true));
         }
 
         $error_message = '';

@@ -1,3 +1,5 @@
+## [3.15]
+- Create order on fail callback if reserved amount is greater than zero.
 ## [3.14]
 - Add support for Trustly.
 ## [3.13]
