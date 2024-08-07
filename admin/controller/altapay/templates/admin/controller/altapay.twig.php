@@ -301,7 +301,7 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
                     $item['description'],
                     $item['itemId'],
                     $item['quantity'],
-                    $item['unitPrice']
+                    (float)number_format($item['unitPrice'], 2, '.', '')
                 );
                 $orderLine->taxAmount = $item['taxAmount'];
                 $orderLines[]         = $orderLine;
@@ -422,7 +422,7 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
                     $item['description'],
                     $item['itemId'],
                     $item['quantity'],
-                    $item['unitPrice']
+                    (float)number_format($item['unitPrice'], 2, '.', '')
                 );
                 $orderLine->taxAmount = $item['taxAmount'];
                 $orderLines[]         = $orderLine;
