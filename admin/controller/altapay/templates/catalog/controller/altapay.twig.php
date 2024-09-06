@@ -265,6 +265,7 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
             $config->setCallbackOpen($base_path . 'index.php?route=extension/payment/Altapay_{key}/open');
             $config->setCallbackNotification($base_path . 'index.php?route=extension/payment/Altapay_{key}/callback');
             $config->setCallbackForm($base_path . 'index.php?route=extension/payment/Altapay_{key}/paymentwindow');
+            $config->setCallbackRedirect($base_path . 'index.php?route=extension/payment/Altapay_{key}/redirect');
 
             $customerInfo = $this->setCustomer($order_info);
 
@@ -827,6 +828,14 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
         }
 
         return $this->response->setOutput($this->load->view('extension/payment/altapay_paymentwindow', $data));
+    }
+
+    public function redirect()
+    {
+        $this->load->language('extension/payment/Altapay_{key}');
+        $this->document->setTitle($this->language->get('payment_window_title'));
+
+        return $this->response->setOutput($this->load->view('extension/payment/altapay_redirect'));
     }
 
     public function callback()
