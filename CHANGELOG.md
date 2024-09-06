@@ -1,3 +1,7 @@
+## [3.16]
+- Implement callback redirect.
+- Fix: Order line amount mismatch & rounding issues.
+- Fix: Order date in export reconciliation data.
 ## [3.15]
 - Create order on fail callback if reserved amount is greater than zero.
 ## [3.14]
