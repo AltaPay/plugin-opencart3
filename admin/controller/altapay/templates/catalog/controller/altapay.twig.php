@@ -97,7 +97,7 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
                             $order_info['shipping_method'],
                             $order_info['shipping_code'],
                             1,
-                            (float)number_format($line['value'] * $order_info['currency_value'], 2, '.', '')
+                            round(($line['value'] * $order_info['currency_value']), 2)
                         );
                         $orderLineShipping->setGoodsType('shipment');
                         $shipping = true;
@@ -228,7 +228,7 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
                     $couponData['description'],
                     $couponData['itemId'],
                     1,
-                    (float)number_format($discount_inc_vat, 2, '.', '')
+                    round($discount_inc_vat, 2)
                 );
                 $couponOrderLine->setGoodsType('handling');
                 $lineData[] = $couponOrderLine;
@@ -239,7 +239,7 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
                     $voucher['description'],
                     $voucher['itemId'],
                     1,
-                    (float)number_format($voucher['unitPrice'], 2, '.', '')
+                    round($voucher['unitPrice'], 2)
                 );
 
                 $orderLine->setGoodsType('handling');
