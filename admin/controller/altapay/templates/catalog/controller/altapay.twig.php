@@ -97,7 +97,7 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
                             $order_info['shipping_method'],
                             $order_info['shipping_code'],
                             1,
-                            $line['value'] * $order_info['currency_value']
+                            round(($line['value'] * $order_info['currency_value']), 2)
                         );
                         $orderLineShipping->setGoodsType('shipment');
                         $shipping = true;
@@ -228,7 +228,7 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
                     $couponData['description'],
                     $couponData['itemId'],
                     1,
-                    $discount_inc_vat
+                    round($discount_inc_vat, 2)
                 );
                 $couponOrderLine->setGoodsType('handling');
                 $lineData[] = $couponOrderLine;
@@ -239,11 +239,24 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
                     $voucher['description'],
                     $voucher['itemId'],
                     1,
-                    $voucher['unitPrice']
+                    round($voucher['unitPrice'], 2)
                 );
 
                 $orderLine->setGoodsType('handling');
                 $lineData[] = $orderLine;
+            }
+
+            //Add compensation
+            $totalOrderAmount = round($amount, 2);
+            $orderLinesTotal = 0;
+            foreach ($lineData as $orderLine) {
+                $orderLinePriceWithTax = ($orderLine->unitPrice * $orderLine->quantity) + $orderLine->taxAmount;
+                $orderLinesTotal += $orderLinePriceWithTax - ($orderLinePriceWithTax * ($orderLine->discount / 100));
+            }
+
+            $totalCompensationAmount = round(($totalOrderAmount - $orderLinesTotal), 3);
+            if (($totalCompensationAmount > 0 || $totalCompensationAmount < 0)) {
+                $lineData[] = $this->compensationOrderline('total', $totalCompensationAmount);
             }
 
             $config = new Config();
@@ -252,13 +265,14 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
             $config->setCallbackOpen($base_path . 'index.php?route=extension/payment/Altapay_{key}/open');
             $config->setCallbackNotification($base_path . 'index.php?route=extension/payment/Altapay_{key}/callback');
             $config->setCallbackForm($base_path . 'index.php?route=extension/payment/Altapay_{key}/paymentwindow');
+            $config->setCallbackRedirect($base_path . 'index.php?route=extension/payment/Altapay_{key}/redirect');
 
             $customerInfo = $this->setCustomer($order_info);
 
             $request = new PaymentRequest($this->getAuth());
             $request->setTerminal($this->terminal_key)
                     ->setShopOrderId($order_info['order_id'])
-                    ->setAmount(round($amount, 2))
+                    ->setAmount($totalOrderAmount)
                     ->setCurrency($currency)
                     ->setTransactionInfo($transactionInfo)
                     ->setCookie($cookie)
@@ -816,6 +830,14 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
         return $this->response->setOutput($this->load->view('extension/payment/altapay_paymentwindow', $data));
     }
 
+    public function redirect()
+    {
+        $this->load->language('extension/payment/Altapay_{key}');
+        $this->document->setTitle($this->language->get('payment_window_title'));
+
+        return $this->response->setOutput($this->load->view('extension/payment/altapay_redirect'));
+    }
+
     public function callback()
     {
         // Load settings model
@@ -975,4 +997,22 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
             }
         }
     }
+
+    private function compensationOrderline($itemID, $compensationAmount)
+    {
+        $orderLine = new OrderLine(
+            'compensation',
+            'comp-' . $itemID,
+            1,
+            $compensationAmount
+        );
+
+        $orderLine->taxAmount = 0;
+        $orderLine->discount = 0;
+        $orderLine->unitCode = 'unit';
+        $orderLine->setGoodsType('handling');
+
+        return $orderLine;
+    }
+
 }

@@ -301,11 +301,24 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
                     $item['description'],
                     $item['itemId'],
                     $item['quantity'],
-                    $item['unitPrice']
+                    round($item['unitPrice'], 2)
                 );
                 $orderLine->taxAmount = $item['taxAmount'];
                 $orderLines[]         = $orderLine;
             }
+        }
+
+        //Add compensation
+        $totalOrderAmount = round($amount, 2);
+        $orderLinesTotal = 0;
+        foreach ($orderLines as $orderLine) {
+            $orderLinePriceWithTax = ($orderLine->unitPrice * $orderLine->quantity) + $orderLine->taxAmount;
+            $orderLinesTotal += $orderLinePriceWithTax - ($orderLinePriceWithTax * ($orderLine->discount / 100));
+        }
+
+        $totalCompensationAmount = round(($totalOrderAmount - $orderLinesTotal), 3);
+        if (($totalCompensationAmount > 0 || $totalCompensationAmount < 0)) {
+            $orderLines[] = $this->compensationOrderline('total', $totalCompensationAmount);
         }
 
         if ($order_id && $amount > 0) {
@@ -319,7 +332,7 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
                     try {
                         $reconciliation_identifier = sha1($order_id . time() . $txnID);
                         $api = new CaptureReservation($this->getAuth());
-                        $api->setAmount(round($amount, 2));
+                        $api->setAmount($totalOrderAmount);
                         $api->setOrderLines($orderLines);
                         $api->setTransaction($txnID);
                         $api->setReconciliationIdentifier($reconciliation_identifier);
@@ -409,11 +422,24 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
                     $item['description'],
                     $item['itemId'],
                     $item['quantity'],
-                    $item['unitPrice']
+                    round($item['unitPrice'], 2)
                 );
                 $orderLine->taxAmount = $item['taxAmount'];
                 $orderLines[]         = $orderLine;
             }
+        }
+
+        //Add compensation
+        $totalOrderAmount = round($amount, 2);
+        $orderLinesTotal = 0;
+        foreach ($orderLines as $orderLine) {
+            $orderLinePriceWithTax = ($orderLine->unitPrice * $orderLine->quantity) + $orderLine->taxAmount;
+            $orderLinesTotal += $orderLinePriceWithTax - ($orderLinePriceWithTax * ($orderLine->discount / 100));
+        }
+
+        $totalCompensationAmount = round(($totalOrderAmount - $orderLinesTotal), 3);
+        if (($totalCompensationAmount > 0 || $totalCompensationAmount < 0)) {
+            $orderLines[] = $this->compensationOrderline('total', $totalCompensationAmount);
         }
 
         if ($order_id && $amount > 0) {
@@ -427,7 +453,7 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
                     try {
                         $reconciliation_identifier = sha1($order_id. time() . $txnID);
                         $api = new RefundCapturedReservation($this->getAuth());
-                        $api->setAmount(round($amount, 2));
+                        $api->setAmount($totalOrderAmount);
                         $api->setOrderLines($orderLines);
                         $api->setTransaction($txnID);
                         $api->setReconciliationIdentifier($reconciliation_identifier);
@@ -591,4 +617,21 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
         $this->response->addHeader('Content-Type: application/json');
         $this->response->setOutput(json_encode($json));
     }
+    private function compensationOrderline($itemID, $compensationAmount)
+{
+    $orderLine = new OrderLine(
+        'compensation',
+        'comp-' . $itemID,
+        1,
+        $compensationAmount
+    );
+
+    $orderLine->taxAmount = 0;
+    $orderLine->discount = 0;
+    $orderLine->unitCode = 'unit';
+    $orderLine->setGoodsType('handling');
+
+    return $orderLine;
+}
+
 }

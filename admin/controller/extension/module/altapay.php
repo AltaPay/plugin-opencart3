@@ -576,7 +576,7 @@ class ControllerExtensionModuleAltapay extends Controller
         do{
             $results = $this->model_sale_order->getOrders($filter_data);
             foreach($results as $result) {
-                $row = $this->db->query("SELECT transaction_id FROM `" . DB_PREFIX . "altapay_orders` WHERE `order_id` = '" . (int)$result['order_id'] . "' LIMIT 1")->row;
+                $row = $this->db->query("SELECT transaction_id, created FROM `" . DB_PREFIX . "altapay_orders` WHERE `order_id` = '" . (int)$result['order_id'] . "' LIMIT 1")->row;
                 $item = [];
                 if ($row) {
                     $item['Order ID'] = $result['order_id'];
