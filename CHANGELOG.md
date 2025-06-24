@@ -1,3 +1,9 @@
+# Changelog
+All notable changes to this project will be documented in this file.
+
+## [3.17]
+- Streamline and simplify management of order lines and amounts.
+- Support for the new PayPal Integration.
 ## [3.16]
 - Implement callback redirect.
 - Fix: Order line amount mismatch & rounding issues.
