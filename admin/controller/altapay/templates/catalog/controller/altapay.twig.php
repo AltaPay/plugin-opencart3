@@ -99,6 +99,7 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
                             1,
                             round(($line['value'] * $order_info['currency_value']), 2)
                         );
+                        $orderLineShipping->discount = 0;
                         $orderLineShipping->setGoodsType('shipment');
                         $shipping = true;
                     }
@@ -111,8 +112,7 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
                         $coupon     = true;
                         $couponData = array(
                             'description' => $line['title'],
-                            'itemId'      => 'coupon',
-                            'unitPrice'   => $line['value'] * $order_info['currency_value']
+                            'itemId'      => 'coupon'
                         );
 
                         $coupon_total = $line['value'] * $order_info['currency_value'];
@@ -196,9 +196,9 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
                     );
 
                     $orderLine->taxAmount  = (float)number_format($line['tax'], 2, '.', '');
-                    $orderLine->taxPercent = round(($line['tax'] / $line['price']) * 100, 2);
                     $orderLine->unitCode   = $unitCode;
                     $orderLine->setGoodsType('item');
+                    $orderLine->discount = 0;
                     $lineData[] = $orderLine;
                 }
             }
@@ -230,6 +230,7 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
                     1,
                     round($discount_inc_vat, 2)
                 );
+                $couponOrderLine->discount = 0;
                 $couponOrderLine->setGoodsType('handling');
                 $lineData[] = $couponOrderLine;
             }

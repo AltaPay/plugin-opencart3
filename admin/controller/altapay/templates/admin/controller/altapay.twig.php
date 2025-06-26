@@ -304,6 +304,7 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
                     round($item['unitPrice'], 2)
                 );
                 $orderLine->taxAmount = $item['taxAmount'];
+                $orderLine->discount = 0;
                 $orderLines[]         = $orderLine;
             }
         }
@@ -425,6 +426,7 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
                     round($item['unitPrice'], 2)
                 );
                 $orderLine->taxAmount = $item['taxAmount'];
+                $orderLine->discount = 0;
                 $orderLines[]         = $orderLine;
             }
         }
