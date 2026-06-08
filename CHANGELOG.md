@@ -1,6 +1,8 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [3.18]
+- Add support for CheckoutSession (MarketPay) to associate a checkout session with the payment request.
 ## [3.17]
 - Streamline and simplify management of order lines and amounts.
 - Support for the new PayPal Integration.

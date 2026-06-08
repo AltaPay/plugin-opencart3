@@ -1,6 +1,6 @@
 {
     "require": {
-        "altapay/api-php": "^3.2"
+        "altapay/api-php": "^3.6"
     },
     "config": {
         "vendor-dir": "altapay-libs"

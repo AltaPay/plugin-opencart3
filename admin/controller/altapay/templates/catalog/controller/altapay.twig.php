@@ -6,6 +6,7 @@ require_once dirname(__file__, 4) . './../altapay-libs/autoload.php';
 use Altapay\Api\Ecommerce\Callback;
 use Altapay\Api\Ecommerce\PaymentRequest;
 use Altapay\Api\Payments\CaptureReservation;
+use Altapay\Api\Payments\CheckoutSession;
 use Altapay\Api\Payments\RefundCapturedReservation;
 use Altapay\Api\Payments\ReleaseReservation;
 use Altapay\Exceptions\ClientException;
@@ -286,6 +287,9 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
                     ->setSaleReconciliationIdentifier(sha1($order_info['order_id'] . time() . mt_rand()));
 
             if ($request) {
+                if ($request instanceof PaymentRequest) {
+                    $this->createCheckoutSession($order_info, $request, $totalOrderAmount, $currency);
+                }
                 try {
                     $response                 = $request->call();
                     $requestParams['result']  = 'success';
@@ -313,6 +317,95 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
                 echo json_encode(array('status' => 'ok', 'redirect' => $redirectURL));
                 exit;
             }
+        }
+    }
+
+    /**
+     * Build list of active AltaPay terminal names (current terminal first).
+     *
+     * @return array
+     */
+    private function getActiveTerminalNames()
+    {
+        $activeTerminals = array();
+        $currentTerminalName = $this->terminal_key;
+        if (!empty(trim((string)$currentTerminalName))) {
+            $activeTerminals[] = $currentTerminalName;
+        }
+
+        $statusRows = $this->db->query("SELECT `key` FROM " . DB_PREFIX . "setting WHERE `key` LIKE 'payment_Altapay_%_status' AND `value` = '1'");
+        if ($statusRows->num_rows) {
+            foreach ($statusRows->rows as $row) {
+                // Derive terminal key from setting key: payment_Altapay_{key}_status
+                if (!preg_match('/^payment_Altapay_(.+)_status$/', $row['key'], $matches)) {
+                    continue;
+                }
+                $termKey = $matches[1];
+                $titleRow = $this->db->query("SELECT `value` FROM " . DB_PREFIX . "setting WHERE `key` = 'payment_Altapay_" . $this->db->escape($termKey) . "_title' LIMIT 1");
+                if (!$titleRow->num_rows) {
+                    continue;
+                }
+                $name = $titleRow->row['value'];
+                if (!empty(trim((string)$name)) && $name !== $currentTerminalName) {
+                    $activeTerminals[] = $name;
+                }
+            }
+        }
+
+        return $activeTerminals;
+    }
+
+    /**
+     * Create a CheckoutSession and attach the returned session id to the payment request.
+     *
+     * @param array          $order_info
+     * @param PaymentRequest $request
+     * @param float          $amount
+     * @param string         $currency
+     */
+    private function createCheckoutSession($order_info, $request, $amount, $currency)
+    {
+        if (!($request instanceof PaymentRequest)) {
+            return;
+        }
+
+        // Stable identifier across order attempts in the same checkout flow.
+        $checkoutFlowId = $this->session->getId();
+        if (empty($checkoutFlowId)) {
+            $checkoutFlowId = session_id();
+        }
+        if (empty($checkoutFlowId)) {
+            // Fallback if no PHP session is available.
+            $checkoutFlowId = $order_info['order_id'];
+        }
+
+        $sessionKey = 'altapay_checkout_session_id_' . $checkoutFlowId;
+        $sessionId = isset($this->session->data[$sessionKey]) ? $this->session->data[$sessionKey] : '';
+
+        if (empty($sessionId)) {
+            try {
+                $activeTerminals = $this->getActiveTerminalNames();
+                $sessionId = 'session-' . $checkoutFlowId . '-' . $order_info['order_id'];
+                $marketPaySession = new CheckoutSession($this->getAuth());
+                $marketPaySession->setTerminals($activeTerminals)
+                    ->setTerminal($this->terminal_key)
+                    ->setShopOrderId($order_info['order_id'])
+                    ->setAmount((float)$amount)
+                    ->setCurrency($currency)
+                    ->setSessionId($sessionId);
+
+                $checkoutResponse = $marketPaySession->call();
+                if (isset($checkoutResponse->Session->Id)) {
+                    $sessionId = $checkoutResponse->Session->Id;
+                }
+                $this->session->data[$sessionKey] = $sessionId;
+            } catch (\Exception $e) {
+                $sessionId = '';
+            }
+        }
+
+        if (!empty($sessionId)) {
+            $request->setSessionId($sessionId);
         }
     }
 
