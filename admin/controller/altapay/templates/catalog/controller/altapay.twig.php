@@ -333,22 +333,27 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
             $activeTerminals[] = $currentTerminalName;
         }
 
-        $statusRows = $this->db->query("SELECT `key` FROM " . DB_PREFIX . "setting WHERE `key` LIKE 'payment_Altapay_%_status' AND `value` = '1'");
-        if ($statusRows->num_rows) {
-            foreach ($statusRows->rows as $row) {
-                // Derive terminal key from setting key: payment_Altapay_{key}_status
-                if (!preg_match('/^payment_Altapay_(.+)_status$/', $row['key'], $matches)) {
-                    continue;
+        $rows = $this->db->query("SELECT `key`, `value` FROM " . DB_PREFIX . "setting WHERE `key` LIKE 'payment\\_Altapay\\_%\\_status' OR `key` LIKE 'payment\\_Altapay\\_%\\_title'");
+
+        $statuses = array();
+        $titles   = array();
+        if ($rows->num_rows) {
+            foreach ($rows->rows as $row) {
+                if (preg_match('/^payment_Altapay_(.+)_status$/', $row['key'], $m)) {
+                    $statuses[$m[1]] = $row['value'];
+                } elseif (preg_match('/^payment_Altapay_(.+)_title$/', $row['key'], $m)) {
+                    $titles[$m[1]] = $row['value'];
                 }
-                $termKey = $matches[1];
-                $titleRow = $this->db->query("SELECT `value` FROM " . DB_PREFIX . "setting WHERE `key` = 'payment_Altapay_" . $this->db->escape($termKey) . "_title' LIMIT 1");
-                if (!$titleRow->num_rows) {
-                    continue;
-                }
-                $name = $titleRow->row['value'];
-                if (!empty(trim((string)$name)) && $name !== $currentTerminalName) {
-                    $activeTerminals[] = $name;
-                }
+            }
+        }
+
+        foreach ($statuses as $termKey => $status) {
+            if ((string)$status !== '1' || !isset($titles[$termKey])) {
+                continue;
+            }
+            $name = $titles[$termKey];
+            if (!empty(trim((string)$name)) && $name !== $currentTerminalName) {
+                $activeTerminals[] = $name;
             }
         }
 
