@@ -48,8 +48,6 @@ class Order {
         cy.get('#button-payment-method').click()
         cy.get('#button-confirm').click()
         cy.get('[id=creditCardNumberInput]').type('4111111111111111')
-        cy.get('#emonth').type('01')
-        cy.get('#eyear').type('2023')
         cy.get('#cvcInput').type('123')
         cy.get('#cardholderNameInput').type('testname')
         cy.get('#pensioCreditCardPaymentSubmitButton').click().wait(2000)
