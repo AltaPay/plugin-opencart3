@@ -88,7 +88,11 @@ class Order {
             cy.get('#input-username').type(admin.adminUsername)
             cy.get('#input-password').type(admin.adminPass)
             cy.get('.btn').click()
-            cy.get('.close').click()
+            cy.get('body').then(($body) => {
+            if ($body.find('.close').length > 0) {
+                cy.get('.close').click()
+            }
+        })
             cy.get('h1').should('have.text', 'Dashboard')
         })
     }
