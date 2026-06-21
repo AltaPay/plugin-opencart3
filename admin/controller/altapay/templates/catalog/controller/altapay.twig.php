@@ -271,7 +271,40 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
 
             $customerInfo = $this->setCustomer($order_info);
 
+            // Stable identifier across order attempts in the same checkout flow.
+            $checkoutFlowId = 'order_' . (int)$order_info['order_id'];
+
+            $sessionKey = 'altapay_checkout_session_id_' . $checkoutFlowId;
+            $sessionId = isset($this->session->data[$sessionKey]) ? $this->session->data[$sessionKey] : '';
+
+            if (empty($sessionId)) {
+                try {
+                    $activeTerminals = $this->getActiveTerminalNames();
+                    $sessionId = $this->getHashedCheckoutSessionId($checkoutFlowId);
+                    $marketPaySession = new CheckoutSession($this->getAuth());
+                    $marketPaySession->setTerminals($activeTerminals)
+                        ->setTerminal($this->terminal_key)
+                        ->setShopOrderId($order_info['order_id'])
+                        ->setAmount((float)$amount)
+                        ->setCurrency($currency)
+                        ->setSessionId($sessionId);
+
+                    $checkoutResponse = $marketPaySession->call();
+                    if (isset($checkoutResponse->Session->Id)) {
+                        $sessionId = $checkoutResponse->Session->Id;
+                    }
+                    $this->session->data[$sessionKey] = $sessionId;
+                } catch (\Exception $e) {
+                    error_log('AltaPay checkout session creation failed for order ' . $order_info['order_id'] . ': ' . $e->getMessage());
+                }
+            }
+
             $request = new PaymentRequest($this->getAuth());
+
+			if ( $sessionId ) {
+				$request->setSessionId( $sessionId );
+			}
+
             $request->setTerminal($this->terminal_key)
                     ->setShopOrderId($order_info['order_id'])
                     ->setAmount($totalOrderAmount)
@@ -287,9 +320,6 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
                     ->setSaleReconciliationIdentifier(sha1($order_info['order_id'] . time() . mt_rand()));
 
             if ($request) {
-                if ($request instanceof PaymentRequest) {
-                    $this->createCheckoutSession($order_info, $request, $totalOrderAmount, $currency);
-                }
                 try {
                     $response                 = $request->call();
                     $requestParams['result']  = 'success';
@@ -361,56 +391,32 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
     }
 
     /**
-     * Create a CheckoutSession and attach the returned session id to the payment request.
+     * Generate a non-predictable checkout session id for AltaPay.
      *
-     * @param array          $order_info
-     * @param PaymentRequest $request
-     * @param float          $amount
-     * @param string         $currency
+     * Uses the OpenCart checkout session id plus the OpenCart encryption secret
+     * so the resulting value is stable for the same checkout flow and not guessable.
+     *
+     * @param string $checkoutFlowId
+     *
+     * @return string
      */
-    private function createCheckoutSession($order_info, $request, $amount, $currency)
+    private function getHashedCheckoutSessionId($checkoutFlowId)
     {
-        if (!($request instanceof PaymentRequest)) {
-            return;
-        }
-
-        // Stable identifier across order attempts in the same checkout flow.
-        $checkoutFlowId = $this->session->getId();
-        if (empty($checkoutFlowId)) {
-            $checkoutFlowId = session_id();
-        }
-        if (empty($checkoutFlowId)) {
-            // Fallback if no PHP session is available.
-            $checkoutFlowId = $order_info['order_id'];
-        }
-
-        $sessionKey = 'altapay_checkout_session_id_' . $checkoutFlowId;
-        $sessionId = isset($this->session->data[$sessionKey]) ? $this->session->data[$sessionKey] : '';
-
-        if (empty($sessionId)) {
-            try {
-                $activeTerminals = $this->getActiveTerminalNames();
-                $sessionId = 'session-' . $checkoutFlowId . '-' . $order_info['order_id'];
-                $marketPaySession = new CheckoutSession($this->getAuth());
-                $marketPaySession->setTerminals($activeTerminals)
-                    ->setTerminal($this->terminal_key)
-                    ->setShopOrderId($order_info['order_id'])
-                    ->setAmount((float)$amount)
-                    ->setCurrency($currency)
-                    ->setSessionId($sessionId);
-
-                $checkoutResponse = $marketPaySession->call();
-                if (isset($checkoutResponse->Session->Id)) {
-                    $sessionId = $checkoutResponse->Session->Id;
-                }
-                $this->session->data[$sessionKey] = $sessionId;
-            } catch (\Exception $e) {
-                $sessionId = '';
+        $salt = $this->config->get('config_encryption');
+        $raw  = $checkoutFlowId . '|' . $salt;
+        return substr(hash('sha256', $raw), 0, 30);
+    }
+    
+    /**
+     * Clear AltaPay checkout session data from OpenCart session.
+     * 
+     */
+    private function clearAltaPayCheckoutSessionData()
+    {
+        foreach ($this->session->data as $key => $value) {
+            if (strpos($key, 'altapay_checkout_session_id_') === 0) {
+                unset($this->session->data[$key]);
             }
-        }
-
-        if (!empty($sessionId)) {
-            $request->setSessionId($sessionId);
         }
     }
 
@@ -573,6 +579,8 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
             }
 
             $this->model_checkout_order->addOrderHistory($order_id, $this->config->get('payment_Altapay_{key}_order_status_id'), $comment, true);
+
+            $this->clearAltaPayCheckoutSessionData();
 
             // Redirect to order success
             $this->response->redirect($this->url->link('checkout/success', 'user_token=' . $this->session->data['user_token'], true));
