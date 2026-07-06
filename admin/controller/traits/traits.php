@@ -13,7 +13,7 @@ trait traitTransactionInfo
             'ecomPlatform'         => 'OpenCart',
             'ecomVersion'          => VERSION,
             'altapayPluginName'    => 'AltaPay',
-            'altapayPluginVersion' => '3.17',
+            'altapayPluginVersion' => '3.18',
             'otherInfo'            => $otherinfo,
         );
 

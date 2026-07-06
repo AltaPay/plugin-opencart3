@@ -6,6 +6,7 @@ require_once dirname(__file__, 4) . './../altapay-libs/autoload.php';
 use Altapay\Api\Ecommerce\Callback;
 use Altapay\Api\Ecommerce\PaymentRequest;
 use Altapay\Api\Payments\CaptureReservation;
+use Altapay\Api\Payments\CheckoutSession;
 use Altapay\Api\Payments\RefundCapturedReservation;
 use Altapay\Api\Payments\ReleaseReservation;
 use Altapay\Exceptions\ClientException;
@@ -270,7 +271,40 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
 
             $customerInfo = $this->setCustomer($order_info);
 
+            // Stable identifier across order attempts in the same checkout flow.
+            $checkoutFlowId = 'order_' . (int)$order_info['order_id'];
+
+            $sessionKey = 'altapay_checkout_session_id_' . $checkoutFlowId;
+            $sessionId = isset($this->session->data[$sessionKey]) ? $this->session->data[$sessionKey] : '';
+
+            if (empty($sessionId)) {
+                try {
+                    $activeTerminals = $this->getActiveTerminalNames();
+                    $sessionId = $this->getHashedCheckoutSessionId($checkoutFlowId);
+                    $marketPaySession = new CheckoutSession($this->getAuth());
+                    $marketPaySession->setTerminals($activeTerminals)
+                        ->setTerminal($this->terminal_key)
+                        ->setShopOrderId($order_info['order_id'])
+                        ->setAmount((float)$amount)
+                        ->setCurrency($currency)
+                        ->setSessionId($sessionId);
+
+                    $checkoutResponse = $marketPaySession->call();
+                    if (isset($checkoutResponse->Session->Id)) {
+                        $sessionId = $checkoutResponse->Session->Id;
+                    }
+                    $this->session->data[$sessionKey] = $sessionId;
+                } catch (\Exception $e) {
+                    error_log('AltaPay checkout session creation failed for order ' . $order_info['order_id'] . ': ' . $e->getMessage());
+                }
+            }
+
             $request = new PaymentRequest($this->getAuth());
+
+			if ( $sessionId ) {
+				$request->setSessionId( $sessionId );
+			}
+
             $request->setTerminal($this->terminal_key)
                     ->setShopOrderId($order_info['order_id'])
                     ->setAmount($totalOrderAmount)
@@ -312,6 +346,76 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
                 $redirectURL = $response->Url;
                 echo json_encode(array('status' => 'ok', 'redirect' => $redirectURL));
                 exit;
+            }
+        }
+    }
+
+    /**
+     * Build list of active AltaPay terminal names (current terminal first).
+     *
+     * @return array
+     */
+    private function getActiveTerminalNames()
+    {
+        $activeTerminals = array();
+        $currentTerminalName = $this->terminal_key;
+        if (!empty(trim((string)$currentTerminalName))) {
+            $activeTerminals[] = $currentTerminalName;
+        }
+
+        $rows = $this->db->query("SELECT `key`, `value` FROM " . DB_PREFIX . "setting WHERE `key` LIKE 'payment\\_Altapay\\_%\\_status' OR `key` LIKE 'payment\\_Altapay\\_%\\_title'");
+
+        $statuses = array();
+        $titles   = array();
+        if ($rows->num_rows) {
+            foreach ($rows->rows as $row) {
+                if (preg_match('/^payment_Altapay_(.+)_status$/', $row['key'], $m)) {
+                    $statuses[$m[1]] = $row['value'];
+                } elseif (preg_match('/^payment_Altapay_(.+)_title$/', $row['key'], $m)) {
+                    $titles[$m[1]] = $row['value'];
+                }
+            }
+        }
+
+        foreach ($statuses as $termKey => $status) {
+            if ((string)$status !== '1' || !isset($titles[$termKey])) {
+                continue;
+            }
+            $name = $titles[$termKey];
+            if (!empty(trim((string)$name)) && $name !== $currentTerminalName) {
+                $activeTerminals[] = $name;
+            }
+        }
+
+        return $activeTerminals;
+    }
+
+    /**
+     * Generate a non-predictable checkout session id for AltaPay.
+     *
+     * Uses the OpenCart checkout session id plus the OpenCart encryption secret
+     * so the resulting value is stable for the same checkout flow and not guessable.
+     *
+     * @param string $checkoutFlowId
+     *
+     * @return string
+     */
+    private function getHashedCheckoutSessionId($checkoutFlowId)
+    {
+        $salt = $this->config->get('config_encryption');
+        $raw  = $checkoutFlowId . '|' . $salt;
+        return substr(hash('sha256', $raw), 0, 30);
+    }
+    
+    /**
+     * Clear AltaPay checkout session data from OpenCart session.
+     * 
+     */
+    private function clearAltaPayCheckoutSessionData()
+    {
+        foreach ($this->session->data as $key => $value) {
+            if (strpos($key, 'altapay_checkout_session_id_') === 0) {
+                unset($this->session->data[$key]);
             }
         }
     }
@@ -475,6 +579,8 @@ class ControllerExtensionPaymentAltapay{key} extends Controller
             }
 
             $this->model_checkout_order->addOrderHistory($order_id, $this->config->get('payment_Altapay_{key}_order_status_id'), $comment, true);
+
+            $this->clearAltaPayCheckoutSessionData();
 
             // Redirect to order success
             $this->response->redirect($this->url->link('checkout/success', 'user_token=' . $this->session->data['user_token'], true));

@@ -48,8 +48,6 @@ class Order {
         cy.get('#button-payment-method').click()
         cy.get('#button-confirm').click()
         cy.get('[id=creditCardNumberInput]').type('4111111111111111')
-        cy.get('#emonth').type('01')
-        cy.get('#eyear').type('2023')
         cy.get('#cvcInput').type('123')
         cy.get('#cardholderNameInput').type('testname')
         cy.get('#pensioCreditCardPaymentSubmitButton').click().wait(2000)
@@ -90,7 +88,11 @@ class Order {
             cy.get('#input-username').type(admin.adminUsername)
             cy.get('#input-password').type(admin.adminPass)
             cy.get('.btn').click()
-            cy.get('.close').click()
+            cy.get('body').then(($body) => {
+            if ($body.find('.close').length > 0) {
+                cy.get('.close').click()
+            }
+        })
             cy.get('h1').should('have.text', 'Dashboard')
         })
     }
